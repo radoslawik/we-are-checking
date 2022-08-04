@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import '../models/drivers.dart';
 import '../models/ergast.dart';
 
-class DataProvider {
+class ErgastDataProvider {
 
     static const String _baseUrl = "https://ergast.com/api/f1";
     static const String _extension = "json";

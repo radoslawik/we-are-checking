@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../services/data_provider.dart';
+import '../services/ergast_data_provider.dart';
 import 'driver.dart';
 
 class DriverStandingsWidget extends StatefulWidget {
@@ -14,7 +14,7 @@ class _DriverStandingsWidgetState extends State<DriverStandingsWidget> {
   List<DriverWidget> _standingWidgets = List.empty();
 
   void initialize() async {
-    final standings = await DataProvider.getDriverStandings();
+    final standings = await ErgastDataProvider.getDriverStandings();
     setState(() {
       _standingWidgets = standings.map((e) => DriverWidget(driver: e.driver)).toList();
     }); 

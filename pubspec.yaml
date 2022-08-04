@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^0.13.4
   collection: ^1.16.0
+  uuid: ^3.0.6
 
 dev_dependencies:
   flutter_test:

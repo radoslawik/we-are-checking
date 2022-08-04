@@ -1,8 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:hard_tyre/widgets/driver_standings.dart';
 
 import 'widgets/constructor_standings.dart';
+import 'widgets/driver_standings.dart';
+import 'widgets/reddit_feed.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,12 +56,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late DriverStandingsWidget _driverStandings;
   late ConstructorStandingsWidget _constructorStandings;
+  late RedditFeedWidget _redditFeedWidget;
 
   @override
   void initState() {
     super.initState();
     _driverStandings = const DriverStandingsWidget();
     _constructorStandings = const ConstructorStandingsWidget();
+    _redditFeedWidget = const RedditFeedWidget();
   }
 
   @override
@@ -81,6 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               _driverStandings,
               _constructorStandings,
+              _redditFeedWidget,
             ],
         ),
       );
