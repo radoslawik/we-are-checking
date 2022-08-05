@@ -1,9 +1,8 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
-import '../models/reddit.dart';
+import '../../models/reddit/post.dart';
 
 class RedditDataProvider {
   static const String _basicAuth = 'Basic R29uWWFMTW9nZ09pTjB5Wl9Fa2FlZzo=';

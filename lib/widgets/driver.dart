@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hard_tyre/models/drivers.dart';
-import 'package:hard_tyre/services/image_source_provider.dart';
+
+import '../services/image_source_provider.dart';
+import '../models/ergast/drivers.dart';
 
 class DriverWidget extends StatefulWidget {
   const DriverWidget({Key? key, required this.driver}) : super(key: key);

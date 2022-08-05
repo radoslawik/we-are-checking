@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../services/ergast_data_provider.dart';
+import '../services/api/ergast_data_provider.dart';
 import 'constructor.dart';
 
 class ConstructorStandingsWidget extends StatefulWidget {

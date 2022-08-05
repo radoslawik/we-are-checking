@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/reddit.dart';
+import '../models/reddit/post.dart';
 
 class RedditPostWidget extends StatefulWidget {
   const RedditPostWidget({Key? key, required this.post}) : super(key: key);

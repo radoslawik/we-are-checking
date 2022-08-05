@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'widgets/constructor_standings.dart';
 import 'widgets/driver_standings.dart';
 import 'widgets/reddit_feed.dart';
+import 'widgets/twitter_timeline.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
+        useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Hard Tyre Home Page'),
     );
@@ -57,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late DriverStandingsWidget _driverStandings;
   late ConstructorStandingsWidget _constructorStandings;
   late RedditFeedWidget _redditFeedWidget;
+  late TwitterTimelineWidget _twitterTimelineWidget;
 
   @override
   void initState() {
@@ -64,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _driverStandings = const DriverStandingsWidget();
     _constructorStandings = const ConstructorStandingsWidget();
     _redditFeedWidget = const RedditFeedWidget();
+    _twitterTimelineWidget = const TwitterTimelineWidget();
   }
 
   @override
@@ -85,6 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
               _driverStandings,
               _constructorStandings,
               _redditFeedWidget,
+              _twitterTimelineWidget,
             ],
         ),
       );

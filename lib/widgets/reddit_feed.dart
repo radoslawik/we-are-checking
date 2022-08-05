@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../services/reddit_data_provider.dart';
+import '../services/api/reddit_data_provider.dart';
 import 'reddit_post.dart';
 
 
