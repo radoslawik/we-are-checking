@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
             textStyle: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 72,
-              letterSpacing: 3,
+              letterSpacing: 2,
               height: 0.7,
               color: Colors.black87
             )
@@ -35,19 +35,27 @@ class MyApp extends StatelessWidget {
             textStyle: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 52,
-              letterSpacing: 3,
+              letterSpacing: 2,
               height: 0.7,
-              color: Colors.grey
+              color: Colors.black87
             )
           ),
           headline3: GoogleFonts.poppins(
             textStyle: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 36,
-              letterSpacing: 3,
+              letterSpacing: 1.5,
               height: 0.7,
               color: Colors.black87,
-
+            )
+          ),
+          headline4: GoogleFonts.poppins(
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 28,
+              letterSpacing: 1.5,
+              height: 0.7,
+              color: Colors.black87,
             )
           )
         ),
