@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../models/ergast/constructors.dart';
+import '../models/ergast/standings.dart';
 import '../services/color_provider.dart';
 import '../services/image_source_provider.dart';
 
 class ConstructorWidget extends StatefulWidget {
-  const ConstructorWidget({Key? key, required this.constructor}) : super(key: key);
-  final Constructor constructor;
+  const ConstructorWidget({Key? key, required this.standing}) : super(key: key);
+  final ConstructorStanding standing;
   @override
   State<ConstructorWidget> createState() => _ConstructorWidgetState();
 }
@@ -25,45 +24,95 @@ class _ConstructorWidgetState extends State<ConstructorWidget> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(50),
           child: Container(
+            width: 600,
             color: Colors.white,
             child: Stack(
               children: [
+                ClipPath(
+                    clipper: WidgetClipper(),
+                    child: Container(
+                      height: 120,
+                      width: 600,
+                      color: ColorProvider.getColor(widget.standing.constructor.constructorId),
+                      child: Image.network(ImageSourceProvider.getCarImageSource(widget.standing.constructor.constructorId), scale: 1.4, alignment: Alignment.topRight)
+                    ),
+                  ),
+                  
                   ClipPath(
                     clipper: WidgetClipper(),
                     child: Container(
                       height: 120,
                       width: 600,
-                      color: ColorProvider.getColor(widget.constructor.constructorId),
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 1),
-                        child: Image.network(ImageSourceProvider.getCarImageSource(widget.constructor.constructorId), scale: 1.4, alignment: Alignment.topRight),
-                      )
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            Colors.black38,
+                            Colors.transparent,
+                          ],
+                          stops: [
+                            0.0,
+                            0.7,
+                          ]
+                        )
+                      ),
+                      //color: ColorProvider.getColor(widget.constructor.constructorId),
+                      child: Image.network(ImageSourceProvider.getCarImageSource(widget.standing.constructor.constructorId), scale: 1.4, alignment: Alignment.topRight)
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 60, top: 50),
-                    child: Image.network(ImageSourceProvider.getLogoImageSource(widget.constructor.constructorId), scale: 1.2),
+                    padding: const EdgeInsets.only(left: 30, top: 25),
+                    child: Image.network(ImageSourceProvider.getLogoImageSource(widget.standing.constructor.constructorId), scale: 1.2),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20, top: 130, bottom: 20),
-                    child: Column(
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              widget.constructor.name,
-                              style: GoogleFonts.getFont(
-                                'Poppins',
-                                textStyle: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
-                                  letterSpacing: 2
-                                )
-                              ),)
-                          ],
-                        )
-                      ],
+                    padding: const EdgeInsets.only(left: 20, right: 20, top: 110, bottom: 20),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                widget.standing.position,
+                                style: Theme.of(context).textTheme.headline1,
+                              ),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              Container(
+                                height: 40,
+                                width: 8,
+                                color: ColorProvider.getColor(widget.standing.constructor.constructorId),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                widget.standing.constructor.name.toUpperCase(),
+                                style: Theme.of(context).textTheme.headline3,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                                                            Text(
+                                'POINTS',
+                                style: Theme.of(context).textTheme.bodyMedium
+                              ),
+                              
+                              const SizedBox(width: 10),
+Text(
+                                widget.standing.points,
+                                style: Theme.of(context).textTheme.headline3,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   )
               ],
@@ -79,15 +128,15 @@ class WidgetClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    final double xScaling = size.width / 396.5;
+    final double xScaling = size.width / 397;
     final double yScaling = size.height / 87;
-    path.lineTo(0 * xScaling,34 * yScaling);
-    path.cubicTo(1 * xScaling,34 * yScaling,47.5 * xScaling,25.4225 * yScaling,71 * xScaling,28.5 * yScaling,);
-    path.cubicTo(94.5 * xScaling,31.5775 * yScaling,136.5 * xScaling,46.3438 * yScaling,170 * xScaling,61 * yScaling,);
+    path.lineTo(0 * xScaling,23 * yScaling);
+    path.cubicTo(0 * xScaling,23 * yScaling,30 * xScaling,10.4225 * yScaling,55 * xScaling,13.5 * yScaling,);
+    path.cubicTo(94.5 * xScaling,16.5775 * yScaling,136.5 * xScaling,46.3438 * yScaling,170 * xScaling,61 * yScaling,);
     path.cubicTo(203.5 * xScaling,75.6562 * yScaling,232.5 * xScaling,85.5 * yScaling,261 * xScaling,85.5 * yScaling,);
     path.cubicTo(289.5 * xScaling,85.5 * yScaling,317.5 * xScaling,82.5 * yScaling,338.5 * xScaling,82.5 * yScaling,);
-    path.cubicTo(359.5 * xScaling,82.5 * yScaling,396.5 * xScaling,85.5 * yScaling,396.5 * xScaling,85.5 * yScaling,);
-    path.cubicTo(396.5 * xScaling,85.5 * yScaling,396.5 * xScaling,0 * yScaling,396.5 * xScaling,0 * yScaling,);
+    path.cubicTo(359.5 * xScaling,82.5 * yScaling,397 * xScaling,85.5 * yScaling,396.5 * xScaling,85.5 * yScaling,);
+    path.cubicTo(396.5 * xScaling,85.5 * yScaling,397 * xScaling,0 * yScaling,396.5 * xScaling,0 * yScaling,);
     return path;
   }
 

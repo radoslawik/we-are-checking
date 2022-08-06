@@ -46,11 +46,11 @@ class RedditDataProvider {
       if(response.statusCode == 200)
       {
         List<dynamic> postsInfo = jsonDecode(response.body)["data"]["children"];
-        _posts = postsInfo.map((e) => e["data"]).map((d) =>
+        _posts = postsInfo.where((p) => p["data"]["author"] != 'F1-Bot').map((e) => e["data"]).map((d) =>
           RedditPost(d["title"], d["thumbnail"], d["subreddit_name_prefixed"], d["author"], d["created_utc"], d["num_comments"])).toList();
       }
     }
-    return _posts ?? List.empty();
+    return _posts?.take(10).toList() ?? List.empty();
   }
 
 }

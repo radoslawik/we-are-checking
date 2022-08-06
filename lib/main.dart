@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'widgets/constructor_standings.dart';
 import 'widgets/driver_standings.dart';
@@ -20,6 +21,36 @@ class MyApp extends StatelessWidget {
       scrollBehavior: MyCustomScrollBehavior(),
       title: 'Hard Tyre',
       theme: ThemeData(
+        textTheme: TextTheme(
+          headline1: GoogleFonts.poppins(
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 72,
+              letterSpacing: 3,
+              height: 0.7,
+              color: Colors.black87
+            )
+          ),
+          headline2: GoogleFonts.poppins(
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 52,
+              letterSpacing: 3,
+              height: 0.7,
+              color: Colors.grey
+            )
+          ),
+          headline3: GoogleFonts.poppins(
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 36,
+              letterSpacing: 3,
+              height: 0.7,
+              color: Colors.black87,
+
+            )
+          )
+        ),
         // This is the theme of your application.
         //
         // Try running your application with "flutter run". You'll see the

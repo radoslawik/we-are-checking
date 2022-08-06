@@ -16,7 +16,7 @@ class _ConstructorStandingsWidgetState extends State<ConstructorStandingsWidget>
   void initialize() async {
     final standings = await ErgastDataProvider.getConstructorStandings();
     setState(() {
-      _standingWidgets = standings.map((e) => ConstructorWidget(constructor: e.constructor)).toList();
+      _standingWidgets = standings.map((e) => ConstructorWidget(standing: e)).toList();
     }); 
   }
 
@@ -29,7 +29,7 @@ class _ConstructorStandingsWidgetState extends State<ConstructorStandingsWidget>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 300,
+      height: 220,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: _standingWidgets,

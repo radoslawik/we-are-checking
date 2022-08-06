@@ -18,7 +18,7 @@ class _RedditPostWidgetState extends State<RedditPostWidget> {
         height: 400,
         child: ListView(
           children: [
-            widget.post.imageUrl != 'self' ? Image.network(widget.post.imageUrl, height: 100) : Container(),
+            widget.post.imageUrl.startsWith('https://') ? Image.network(widget.post.imageUrl, height: 100) : Container(),
             Text(widget.post.title),
             Text(widget.post.author),
             Text(widget.post.subreddit),
