@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ColorProvider {
   static final Map _colorMap = {
-    'red_bull': '3671c6',
+    'red_bull': '0b4081',
     'ferrari': 'f91536',
     'mercedes': '6cd3bf',
     'alpine': '2293d1',

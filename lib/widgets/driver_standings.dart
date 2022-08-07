@@ -16,7 +16,7 @@ class _DriverStandingsWidgetState extends State<DriverStandingsWidget> {
   void initialize() async {
     final standings = await ErgastDataProvider.getDriverStandings();
     setState(() {
-      _standingWidgets = standings.map((e) => DriverWidget(driver: e.driver)).toList();
+      _standingWidgets = standings.map((e) => DriverWidget(standing: e)).toList();
     }); 
   }
 
@@ -28,12 +28,24 @@ class _DriverStandingsWidgetState extends State<DriverStandingsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: _standingWidgets,
-        )
-      );
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Driver standings',
+            style: Theme.of(context).textTheme.headline4,
+          ),
+          SizedBox(
+            height: 150,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: _standingWidgets,
+              )
+            ),
+        ],
+      ),
+    );
   }
 }

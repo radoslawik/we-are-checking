@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
           headline1: GoogleFonts.poppins(
             textStyle: const TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 72,
+              fontSize: 52,
               letterSpacing: 2,
               height: 0.7,
               color: Colors.black87
@@ -34,30 +34,46 @@ class MyApp extends StatelessWidget {
           headline2: GoogleFonts.poppins(
             textStyle: const TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 52,
-              letterSpacing: 2,
-              height: 0.7,
+              fontSize: 36,
+              letterSpacing: 1.5,
+              height: 0.8,
               color: Colors.black87
             )
           ),
           headline3: GoogleFonts.poppins(
             textStyle: const TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 36,
+              fontSize: 24,
               letterSpacing: 1.5,
-              height: 0.7,
+              height: 0.8,
               color: Colors.black87,
             )
           ),
           headline4: GoogleFonts.poppins(
             textStyle: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 28,
+              fontSize: 24,
               letterSpacing: 1.5,
-              height: 0.7,
+              height: 0.8,
               color: Colors.black87,
             )
-          )
+          ),
+          headline5: GoogleFonts.poppins(
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              letterSpacing: 1.5,
+              height: 0.8,
+              color: Colors.black87,
+            )
+          ),
+          headline6: GoogleFonts.poppins(
+            textStyle: const TextStyle(
+              fontSize: 18,
+              letterSpacing: 1.5,
+              height: 0.8,
+              color: Colors.black87,
+            )
+          ),
         ),
         // This is the theme of your application.
         //
@@ -118,11 +134,11 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
+      // appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
+        // title: Text(widget.title),
+      // ),
       body: ListView(
             children: [
               _driverStandings,

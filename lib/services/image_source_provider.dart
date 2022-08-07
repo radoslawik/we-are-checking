@@ -49,6 +49,6 @@ class ImageSourceProvider {
 
   static String getDriverImageSource(String key){
     var driverString = _driverNamesMap[key];
-    return '$_baseDriverImageUrl$driverString.png.transform/4col/image.png';
+    return '$_baseDriverImageUrl$driverString.png.transform/2col/image.png';
   }
 }

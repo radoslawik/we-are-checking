@@ -28,17 +28,24 @@ class _ConstructorStandingsWidgetState extends State<ConstructorStandingsWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text('Constructor standings'),
-        SizedBox(
-          height: 160,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: _standingWidgets,
-            ),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Constructor standings',
+            style: Theme.of(context).textTheme.headline4,
+          ),
+          SizedBox(
+            height: 150,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: _standingWidgets,
+              ),
+          ),
+        ],
+      ),
     );
   }
 }

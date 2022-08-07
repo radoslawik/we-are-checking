@@ -42,7 +42,7 @@ class _ConstructorWidgetState extends State<ConstructorWidget> {
                       width: 420,
                       decoration: const BoxDecoration(
                           gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
+                              begin: Alignment.bottomLeft,
                               end: Alignment.centerRight,
                               colors: [
                             Colors.black38,
@@ -95,19 +95,19 @@ class _ConstructorWidgetState extends State<ConstructorWidget> {
                             ),
                             Text(
                               widget.standing.constructor.name.toUpperCase(),
-                              style: Theme.of(context).textTheme.headline4,
+                              style: Theme.of(context).textTheme.headline3,
                             ),
                           ],
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('PTS',
-                                style: Theme.of(context).textTheme.bodyMedium),
+                            Text('POINTS',
+                                style: Theme.of(context).textTheme.headline6),
                             const SizedBox(width: 5),
                             Text(
                               widget.standing.points,
-                              style: Theme.of(context).textTheme.headline4,
+                              style: Theme.of(context).textTheme.headline3,
                             ),
                           ],
                         ),
