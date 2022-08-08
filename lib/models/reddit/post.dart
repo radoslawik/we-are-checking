@@ -6,6 +6,10 @@ class RedditPost {
     this.author,
     this.timeCreated,
     this.comments,
+    this.ups,
+    this.awards,
+    this.redditUrl,
+    this.sourceUrl,
   );
 
   final String title;
@@ -14,4 +18,8 @@ class RedditPost {
   final String author;
   final double timeCreated;
   final int comments;
+  final int ups;
+  final int awards;
+  final String redditUrl;
+  final String? sourceUrl;
 }

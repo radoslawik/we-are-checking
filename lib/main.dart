@@ -74,6 +74,43 @@ class MyApp extends StatelessWidget {
               color: Colors.black87,
             )
           ),
+          bodyText1: GoogleFonts.poppins(
+            textStyle: const TextStyle(
+              fontSize: 14,
+              height: 1.2,
+              color: Colors.black87,
+            )
+          ),
+          bodyText2: GoogleFonts.poppins(
+            textStyle: const TextStyle(
+              fontSize: 12,
+              height: 1.2,
+              color: Colors.black87,
+            )
+          ),
+          subtitle1: GoogleFonts.poppins(
+            textStyle: const TextStyle(
+              fontSize: 14,
+              height: 1.2,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            )
+          ),
+          subtitle2: GoogleFonts.poppins(
+            textStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              height: 1.2,
+              color: Colors.black87,
+            )
+          ),
+          caption: GoogleFonts.poppins(
+            textStyle: const TextStyle(
+              fontSize: 10,
+              height: 1,
+              color: Colors.black87,
+            )
+          ),
         ),
         // This is the theme of your application.
         //

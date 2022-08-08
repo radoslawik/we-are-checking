@@ -33,24 +33,35 @@ class RedditDataProvider {
     return null;
   }
 
-  static Future<List<RedditPost>> getHotPosts() async {
+  static Future<List<RedditPost>> getAllHotPosts() async {
     _token ??= await _getAccessToken();
+    _posts = [];
     if(_posts == null || _token != null)
     {
-      final headers = {
+      for(var sub in ["formula1", "formuladank"])
+      {
+        _posts!.addAll(await getHotPosts(sub));
+      }
+    }
+    _posts!.sort((a,b) => b.ups.compareTo(a.ups));
+    return _posts!.toList();
+  }
+
+  static Future<List<RedditPost>> getHotPosts(String subreddit) async {
+    final headers = {
         'authorization': 'Bearer $_token',
         'user-agent': _userAgent,
       };
-      final response = await http.get(Uri.parse("$_endpoint/r/formula1/hot"), headers: headers);
+      final response = await http.get(Uri.parse("$_endpoint/r/$subreddit/hot?limit=7"), headers: headers);
 
       if(response.statusCode == 200)
       {
         List<dynamic> postsInfo = jsonDecode(response.body)["data"]["children"];
-        _posts = postsInfo.where((p) => p["data"]["author"] != 'F1-Bot').map((e) => e["data"]).map((d) =>
-          RedditPost(d["title"], d["thumbnail"], d["subreddit_name_prefixed"], d["author"], d["created_utc"], d["num_comments"])).toList();
+        return postsInfo.where((p) => p["data"]["author"] != 'F1-Bot').map((e) => e["data"]).map((d) =>
+          RedditPost(d["title"], d["thumbnail"], d["subreddit_name_prefixed"], d["author"], d["created_utc"], d["num_comments"],
+          d["ups"], d["total_awards_received"], "www.reddit.com${d["permalink"]}", d["url"])).toList();
       }
-    }
-    return _posts?.take(10).toList() ?? List.empty();
+    return List.empty();
   }
 
 }

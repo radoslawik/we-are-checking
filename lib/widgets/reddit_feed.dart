@@ -15,7 +15,7 @@ class _RedditFeedWidgetState extends State<RedditFeedWidget> {
   List<RedditPostWidget> _feed = List.empty();
 
   void initialize() async {
-    final posts = await RedditDataProvider.getHotPosts();
+    final posts = await RedditDataProvider.getAllHotPosts();
     setState(() {
       _feed = posts.map((e) => RedditPostWidget(post: e)).toList();
     }); 
@@ -29,12 +29,24 @@ class _RedditFeedWidgetState extends State<RedditFeedWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: _feed,
-        )
-      );
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Hot reddit posts',
+            style: Theme.of(context).textTheme.headline4,
+          ),
+          SizedBox(
+            height: 150,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: _feed,
+              )
+            ),
+        ],
+      ),
+    );
   }
 }
