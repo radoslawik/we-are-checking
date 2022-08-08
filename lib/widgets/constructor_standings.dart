@@ -33,9 +33,18 @@ class _ConstructorStandingsWidgetState extends State<ConstructorStandingsWidget>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Constructor standings',
-            style: Theme.of(context).textTheme.headline4,
+          Row(
+            children: [
+              const Icon(
+                Icons.drive_eta,
+                size: 24.0,
+              ),
+              const SizedBox(width: 5.0),
+              Text(
+                'Constructor standings',
+                style: Theme.of(context).textTheme.headline4,
+              ),
+            ],
           ),
           SizedBox(
             height: 150,

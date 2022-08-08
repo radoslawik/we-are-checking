@@ -33,9 +33,18 @@ class _DriverStandingsWidgetState extends State<DriverStandingsWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Driver standings',
-            style: Theme.of(context).textTheme.headline4,
+          Row(
+            children: [
+              const Icon(
+                Icons.face,
+                size: 24.0,
+              ),
+              const SizedBox(width: 5.0),
+              Text(
+                'Driver standings',
+                style: Theme.of(context).textTheme.headline4,
+              ),
+            ],
           ),
           SizedBox(
             height: 150,

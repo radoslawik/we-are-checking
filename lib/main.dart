@@ -107,7 +107,6 @@ class MyApp extends StatelessWidget {
           caption: GoogleFonts.poppins(
             textStyle: const TextStyle(
               fontSize: 10,
-              height: 1,
               color: Colors.black87,
             )
           ),

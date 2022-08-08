@@ -34,9 +34,18 @@ class _RedditFeedWidgetState extends State<RedditFeedWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Hot reddit posts',
-            style: Theme.of(context).textTheme.headline4,
+          Row(
+            children: [
+              const Icon(
+                Icons.reddit,
+                size: 24.0,
+              ),
+              const SizedBox(width: 5.0),
+              Text(
+                'Reddit hot posts',
+                style: Theme.of(context).textTheme.headline4,
+              ),
+            ],
           ),
           SizedBox(
             height: 150,
