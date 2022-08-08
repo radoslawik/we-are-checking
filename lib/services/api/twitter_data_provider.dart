@@ -30,12 +30,12 @@ class TwitterDataProvider {
     }
 
     static Future<List<Tweet>> _getUserTweets(String id) async {
-      final response = await http.get(Uri.parse("$_endpoint/users/$id/tweets?tweet.fields=attachments,author_id,created_at,public_metrics,conversation_id&max_results=10"), headers: _headers);
+      final response = await http.get(Uri.parse("$_endpoint/users/$id/tweets?tweet.fields=author_id,created_at,public_metrics,conversation_id,entities,lang&expansions=attachments.media_keys&media.fields=preview_image_url,url&max_results=10"), headers: _headers);
       if(response.statusCode == 200)
       {
         List<dynamic> decoded = jsonDecode(response.body)["data"].where((e) => e["id"] == e["conversation_id"]).toList();
         return decoded.map((e) => Tweet(e["text"], e["id"], e["author_id"], _userIds.keys.firstWhereOrNull((k) => _userIds[k] == e['author_id']) ?? "Unknown",
-         e["created_at"], e["public_metrics"]["like_count"])).toList();
+         e["created_at"], e["public_metrics"]["like_count"], e["public_metrics"]["retweet_count"], e["public_metrics"]["reply_count"])).toList();
 
       }
       return List.empty();

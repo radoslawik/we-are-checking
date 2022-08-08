@@ -6,6 +6,8 @@ class Tweet {
     this.authorName,
     this.timeCreated,
     this.likes,
+    this.retweet,
+    this.reply,
   );
 
   final String title;
@@ -14,4 +16,6 @@ class Tweet {
   final String authorName;
   final String timeCreated;
   final int likes;
+  final int retweet;
+  final int reply;
 }
