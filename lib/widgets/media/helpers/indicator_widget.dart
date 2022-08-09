@@ -4,6 +4,7 @@ class IndicatorWidget extends StatefulWidget {
   const IndicatorWidget(
       {Key? key,
       required this.iconData,
+      required this.size,
       required this.number,
       required this.thresholds,
       required this.colors})
@@ -12,6 +13,7 @@ class IndicatorWidget extends StatefulWidget {
   final int number;
   final List<int> thresholds;
   final List<Color> colors;
+  final double size;
   @override
   State<IndicatorWidget> createState() => _IndicatorWidgetState();
 }
@@ -40,7 +42,7 @@ class _IndicatorWidgetState extends State<IndicatorWidget> {
         Icon(
           widget.iconData,
           color: getIndicatorColor(),
-          size: 16.0,
+          size: widget.size,
         ),
         Text(
           formatNumber(),

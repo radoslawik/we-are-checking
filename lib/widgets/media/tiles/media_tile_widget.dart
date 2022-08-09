@@ -47,9 +47,9 @@ class _MediaTileWidgetState extends State<MediaTileWidget> {
             children: [
               Icon(
                 widget.icon,
-                size: 24.0,
+                size: 20.0,
               ),
-              const SizedBox(width: 5.0),
+              const SizedBox(width: 10.0),
               Text(
                 widget.title,
                 style: Theme.of(context).textTheme.headline4,

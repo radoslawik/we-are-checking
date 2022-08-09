@@ -1,5 +1,5 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hard_tyre/models/data/reddit/post.dart';
 import 'package:hard_tyre/models/data/twitter/tweet.dart';
 import 'package:hard_tyre/models/media/news_item.dart';
@@ -20,13 +20,19 @@ class _NewsItemWidgetState extends State<NewsItemWidget> {
   final _scoreThresholds = [5000, 10000];
   final _commentThresholds = [500, 1000];
   final _awardThresholds = [5, 10];
-  final _thColors = [Colors.green.shade700, Colors.orange.shade700];
+  final _replyThresholds = [50, 100];
+  final _retweetThresholds = [250, 500];
+  final _thRedditColors = [Colors.green.shade700, Colors.orange.shade700];
+  final _thTwitterColors = [Colors.green.shade700, Colors.lightBlue.shade700 ];
+  final _redditColor = Colors.orange.shade100;
+  final _twitterColor = Colors.lightBlue.shade100;
 
   late List<CaptionWidget> _topCaptions;
   late List<CaptionWidget> _bottomCaptions;
   late List<IndicatorWidget> _indicators;
   late String _imageUrl;
   late String _newsUrl;
+  late Color _hoverColor;
 
   @override
   void initState() {
@@ -36,15 +42,16 @@ class _NewsItemWidgetState extends State<NewsItemWidget> {
       _topCaptions = [ post.subreddit, 'u/${post.authorName}' ].map((e) => CaptionWidget(text: e)).toList();
       _bottomCaptions = [ CaptionWidget(text: post.sourceUrl) ];
       _indicators = [
-        IndicatorWidget(iconData: Icons.keyboard_double_arrow_up_rounded,
-         number: post.ups, thresholds: _scoreThresholds, colors: _thColors),
-        IndicatorWidget(iconData: Icons.comment_rounded,
-         number: post.comments, thresholds: _commentThresholds, colors: _thColors),
-        IndicatorWidget(iconData: Icons.celebration_rounded,
-         number: post.awards, thresholds: _awardThresholds, colors: _thColors),
+        IndicatorWidget(iconData: Icons.keyboard_double_arrow_up_rounded, size: 16.0,
+         number: post.ups, thresholds: _scoreThresholds, colors: _thRedditColors),
+        IndicatorWidget(iconData: Icons.comment_rounded, size: 16.0,
+         number: post.comments, thresholds: _commentThresholds, colors: _thRedditColors),
+        IndicatorWidget(iconData: Icons.celebration_rounded, size: 16.0,
+         number: post.awards, thresholds: _awardThresholds, colors: _thRedditColors),
       ];
       _imageUrl = post.imageUrl;
       _newsUrl = post.redditUrl;
+      _hoverColor = _redditColor;
     }
     else if(widget.news is Tweet)
     {
@@ -58,15 +65,16 @@ class _NewsItemWidgetState extends State<NewsItemWidget> {
         _bottomCaptions.add(CaptionWidget(text: tweet.hashtags.first));
       }
       _indicators = [
-        IndicatorWidget(iconData: Icons.keyboard_double_arrow_up_rounded,
-         number: tweet.likes, thresholds: _scoreThresholds, colors: _thColors),
-        IndicatorWidget(iconData: Icons.comment_rounded,
-         number: tweet.retweet, thresholds: _commentThresholds, colors: _thColors),
-        IndicatorWidget(iconData: Icons.celebration_rounded,
-         number: tweet.reply, thresholds: _awardThresholds, colors: _thColors),
+        IndicatorWidget(iconData: FontAwesomeIcons.solidHeart, size: 14.0,
+         number: tweet.likes, thresholds: _scoreThresholds, colors: _thTwitterColors),
+        IndicatorWidget(iconData: FontAwesomeIcons.share, size: 14.0,
+         number: tweet.retweet, thresholds: _retweetThresholds, colors: _thTwitterColors),
+        IndicatorWidget(iconData: FontAwesomeIcons.solidComment, size: 14.0,
+         number: tweet.reply, thresholds: _replyThresholds, colors: _thTwitterColors),
       ];
       _imageUrl = tweet.imageUrl;
       _newsUrl = tweet.twitterUrl;
+      _hoverColor = _twitterColor;
     }
   }
 
@@ -93,6 +101,7 @@ class _NewsItemWidgetState extends State<NewsItemWidget> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(30),
           child: MaterialButton(
+            hoverColor: _hoverColor,
             onPressed: openUrl,
             padding: EdgeInsets.zero,
             color: Colors.white,

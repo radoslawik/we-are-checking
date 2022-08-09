@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hard_tyre/services/api/ergast_data_provider.dart';
 import 'package:hard_tyre/services/api/reddit_data_provider.dart';
@@ -152,10 +153,10 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _newsWidgets = [
-      const MediaTileWidget(title: 'Driver standings', icon: Icons.face_rounded, getMedias: ErgastDataProvider.getDriverStandings),
-      const MediaTileWidget(title: 'Constructor standings', icon: Icons.drive_eta_rounded, getMedias: ErgastDataProvider.getConstructorStandings),
-      const MediaTileWidget(title: 'Hot reddit posts', icon: Icons.reddit_rounded, getMedias: RedditDataProvider.getAllHotPosts),
-      const MediaTileWidget(title: 'Recent tweets', icon: Icons.wb_shade_rounded, getMedias: TwitterDataProvider.getTweetTimeline),
+      const MediaTileWidget(title: 'Driver standings', icon: FontAwesomeIcons.trophy, getMedias: ErgastDataProvider.getDriverStandings),
+      const MediaTileWidget(title: 'Constructor standings', icon: FontAwesomeIcons.car, getMedias: ErgastDataProvider.getConstructorStandings),
+      const MediaTileWidget(title: 'Hot reddit posts', icon: FontAwesomeIcons.reddit, getMedias: RedditDataProvider.getAllHotPosts),
+      const MediaTileWidget(title: 'Recent tweets', icon: FontAwesomeIcons.twitter, getMedias: TwitterDataProvider.getTweetTimeline),
     ];
   }
 
