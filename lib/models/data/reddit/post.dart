@@ -1,24 +1,28 @@
 import 'package:hard_tyre/models/media/news_item.dart';
 
 class RedditPost extends NewsItem {
-  RedditPost(
-    title,
-    author,
-    timeCreated,
-    this.imageUrl,
-    this.subreddit,
-    this.comments,
-    this.ups,
-    this.awards,
-    this.redditUrl,
-    this.sourceUrl,
-  ) : super(title, author, timeCreated);
+  RedditPost(this.rawObject) : super(rawObject["title"], rawObject["author"], _timestampToDate(rawObject["created_utc"]))
+  {
+    imageUrl = rawObject["thumbnail"];
+    subreddit = rawObject["subreddit_name_prefixed"];
+    comments = rawObject["num_comments"];
+    ups = rawObject["ups"];
+    awards = rawObject["total_awards_received"];
+    redditUrl = "www.reddit.com${rawObject["permalink"]}";
+    sourceUrl = rawObject["url"];
+  }
 
-  final String imageUrl;
-  final String subreddit;
-  final int comments;
-  final int ups;
-  final int awards;
-  final String redditUrl;
-  final String? sourceUrl;
+  late String imageUrl;
+  late String subreddit;
+  late int comments;
+  late int ups;
+  late int awards;
+  late String redditUrl;
+  late String sourceUrl;
+  dynamic rawObject;
+
+  static DateTime _timestampToDate(double ts){
+    return DateTime.fromMillisecondsSinceEpoch(ts.toInt()*1000);
+  }
+
 }

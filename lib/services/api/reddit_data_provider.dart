@@ -56,15 +56,9 @@ class RedditDataProvider {
       if(response.statusCode == 200)
       {
         List<dynamic> postsInfo = jsonDecode(response.body)["data"]["children"];
-        return postsInfo.where((p) => p["data"]["author"] != 'F1-Bot').map((e) => e["data"]).map((d) =>
-          RedditPost(d["title"], d["author"], timestampToDate(d["created_utc"]), d["thumbnail"], d["subreddit_name_prefixed"], d["num_comments"],
-          d["ups"], d["total_awards_received"], "www.reddit.com${d["permalink"]}", d["url"])).toList();
+        return postsInfo.where((p) => p["data"]["author"] != 'F1-Bot').map((e) => e["data"]).map((d) => RedditPost(d)).toList();
       }
     return List.empty();
-  }
-
-  static DateTime timestampToDate(double ts){
-    return DateTime.fromMillisecondsSinceEpoch(ts.toInt()*1000);
   }
 
 }

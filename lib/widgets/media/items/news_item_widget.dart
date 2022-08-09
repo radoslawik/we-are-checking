@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hard_tyre/models/data/reddit/post.dart';
 import 'package:hard_tyre/models/data/twitter/tweet.dart';
@@ -33,7 +34,7 @@ class _NewsItemWidgetState extends State<NewsItemWidget> {
     if(widget.news is RedditPost){
       final post = widget.news as RedditPost;
       _topCaptions = [ post.subreddit, 'u/${post.authorName}' ].map((e) => CaptionWidget(text: e)).toList();
-      _bottomCaptions = [ CaptionWidget(text: post.sourceUrl ?? '') ];
+      _bottomCaptions = [ CaptionWidget(text: post.sourceUrl) ];
       _indicators = [
         IndicatorWidget(iconData: Icons.keyboard_double_arrow_up_rounded,
          number: post.ups, thresholds: _scoreThresholds, colors: _thColors),
@@ -48,8 +49,14 @@ class _NewsItemWidgetState extends State<NewsItemWidget> {
     else if(widget.news is Tweet)
     {
       final tweet = widget.news as Tweet;
-      _topCaptions = [ CaptionWidget(text: tweet.authorName )];
-      _bottomCaptions = [ CaptionWidget(text: tweet.id) ];
+      _topCaptions = [ CaptionWidget(text: tweet.authorName) ];
+      _bottomCaptions = [];
+      if(tweet.links.isNotEmpty){
+        _bottomCaptions.add(CaptionWidget(text: tweet.links.first));
+      }
+      if(tweet.hashtags.isNotEmpty){
+        _bottomCaptions.add(CaptionWidget(text: tweet.hashtags.first));
+      }
       _indicators = [
         IndicatorWidget(iconData: Icons.keyboard_double_arrow_up_rounded,
          number: tweet.likes, thresholds: _scoreThresholds, colors: _thColors),
@@ -58,8 +65,8 @@ class _NewsItemWidgetState extends State<NewsItemWidget> {
         IndicatorWidget(iconData: Icons.celebration_rounded,
          number: tweet.reply, thresholds: _awardThresholds, colors: _thColors),
       ];
-      _imageUrl = '';
-      _newsUrl = '';
+      _imageUrl = tweet.imageUrl;
+      _newsUrl = tweet.twitterUrl;
     }
   }
 
@@ -69,8 +76,11 @@ class _NewsItemWidgetState extends State<NewsItemWidget> {
   }
   
   void openUrl() async {
-    final url = Uri.parse(_newsUrl);
-    await launchUrl(url);
+    if(_newsUrl != '')
+    {
+      final url = Uri.parse(_newsUrl);
+      await launchUrl(url);
+    }
   }
 
   @override
