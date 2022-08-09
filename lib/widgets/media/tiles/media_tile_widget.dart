@@ -7,9 +7,13 @@ import 'package:hard_tyre/widgets/media/items/driver_widget.dart';
 import 'package:hard_tyre/widgets/media/items/media_item_widget.dart';
 import 'package:hard_tyre/widgets/media/items/news_item_widget.dart';
 
-
 class MediaTileWidget extends StatefulWidget {
-  const MediaTileWidget({Key? key, required this.title, required this.icon, required this.getMedias}) : super(key: key);
+  const MediaTileWidget(
+      {Key? key,
+      required this.title,
+      required this.icon,
+      required this.getMedias})
+      : super(key: key);
   final Future<List<MediaItem>> Function() getMedias;
   final String title;
   final IconData icon;
@@ -18,16 +22,23 @@ class MediaTileWidget extends StatefulWidget {
   State<MediaTileWidget> createState() => _MediaTileWidgetState();
 }
 
-class _MediaTileWidgetState extends State<MediaTileWidget> with AutomaticKeepAliveClientMixin {
+class _MediaTileWidgetState extends State<MediaTileWidget>
+    with AutomaticKeepAliveClientMixin {
   List<MediaItemWidget> _feed = List.empty();
+  bool _isLoading = true;
 
   void initialize() async {
     final medias = await widget.getMedias();
     setState(() {
-      _feed = medias is List<NewsItem> ? medias.map((e) => NewsItemWidget(news: e)).toList() :
-        medias is List<DriverStanding> ?  medias.map((e) => DriverWidget(standing: e)).toList() :
-        medias is List<ConstructorStanding> ? medias.map((e) => ConstructorWidget(standing: e)).toList() : [];
-    }); 
+      _feed = medias is List<NewsItem>
+          ? medias.map((e) => NewsItemWidget(news: e)).toList()
+          : medias is List<DriverStanding>
+              ? medias.map((e) => DriverWidget(standing: e)).toList()
+              : medias is List<ConstructorStanding>
+                  ? medias.map((e) => ConstructorWidget(standing: e)).toList()
+                  : [];
+      _isLoading = false;
+    });
   }
 
   @override
@@ -61,12 +72,18 @@ class _MediaTileWidgetState extends State<MediaTileWidget> with AutomaticKeepAli
             ],
           ),
           SizedBox(
-            height: 150,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: _feed,
-              )
-            ),
+              height: 150,
+              child: _isLoading
+                  ? const SizedBox(
+                      width: 150,
+                      child: Padding(
+                        padding: EdgeInsets.all(30.0),
+                        child: CircularProgressIndicator(),
+                      ))
+                  : ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: _feed,
+                    )),
         ],
       ),
     );
