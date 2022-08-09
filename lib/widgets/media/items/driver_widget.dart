@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hard_tyre/models/data/ergast/standings.dart';
+import 'package:hard_tyre/services/color_provider.dart';
+import 'package:hard_tyre/services/image_source_provider.dart';
 
-import '../models/ergast/standings.dart';
-import '../services/color_provider.dart';
-import '../services/image_source_provider.dart';
+import 'media_item_widget.dart';
 
-class DriverWidget extends StatefulWidget {
+class DriverWidget extends MediaItemWidget {
   const DriverWidget({Key? key, required this.standing}) : super(key: key);
   final DriverStanding standing;
   @override

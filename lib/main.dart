@@ -1,11 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'widgets/constructor_standings.dart';
-import 'widgets/driver_standings.dart';
-import 'widgets/reddit_feed.dart';
-import 'widgets/twitter_timeline.dart';
+import 'package:hard_tyre/services/api/ergast_data_provider.dart';
+import 'package:hard_tyre/services/api/reddit_data_provider.dart';
+import 'package:hard_tyre/services/api/twitter_data_provider.dart';
+import 'package:hard_tyre/widgets/media/tiles/media_tile_widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -147,18 +146,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late DriverStandingsWidget _driverStandings;
-  late ConstructorStandingsWidget _constructorStandings;
-  late RedditFeedWidget _redditFeedWidget;
-  late TwitterTimelineWidget _twitterTimelineWidget;
+  late List<MediaTileWidget> _newsWidgets;
 
   @override
   void initState() {
     super.initState();
-    _driverStandings = const DriverStandingsWidget();
-    _constructorStandings = const ConstructorStandingsWidget();
-    _redditFeedWidget = const RedditFeedWidget();
-    _twitterTimelineWidget = const TwitterTimelineWidget();
+    _newsWidgets = [
+      const MediaTileWidget(title: 'Driver standings', icon: Icons.face_rounded, getMedias: ErgastDataProvider.getDriverStandings),
+      const MediaTileWidget(title: 'Constructor standings', icon: Icons.drive_eta_rounded, getMedias: ErgastDataProvider.getConstructorStandings),
+      const MediaTileWidget(title: 'Hot reddit posts', icon: Icons.reddit_rounded, getMedias: RedditDataProvider.getAllHotPosts),
+      const MediaTileWidget(title: 'Recent tweets', icon: Icons.wb_shade_rounded, getMedias: TwitterDataProvider.getTweetTimeline),
+    ];
   }
 
   @override
@@ -176,12 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // title: Text(widget.title),
       // ),
       body: ListView(
-            children: [
-              _driverStandings,
-              _constructorStandings,
-              _redditFeedWidget,
-              _twitterTimelineWidget,
-            ],
+            children: _newsWidgets
         ),
       );
   }

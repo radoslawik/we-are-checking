@@ -1,8 +1,7 @@
 import 'dart:convert';
+import 'package:hard_tyre/models/data/reddit/post.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
-
-import '../../models/reddit/post.dart';
 
 class RedditDataProvider {
   static const String _basicAuth = 'Basic R29uWWFMTW9nZ09pTjB5Wl9Fa2FlZzo=';
@@ -58,10 +57,14 @@ class RedditDataProvider {
       {
         List<dynamic> postsInfo = jsonDecode(response.body)["data"]["children"];
         return postsInfo.where((p) => p["data"]["author"] != 'F1-Bot').map((e) => e["data"]).map((d) =>
-          RedditPost(d["title"], d["thumbnail"], d["subreddit_name_prefixed"], d["author"], d["created_utc"], d["num_comments"],
+          RedditPost(d["title"], d["author"], timestampToDate(d["created_utc"]), d["thumbnail"], d["subreddit_name_prefixed"], d["num_comments"],
           d["ups"], d["total_awards_received"], "www.reddit.com${d["permalink"]}", d["url"])).toList();
       }
     return List.empty();
+  }
+
+  static DateTime timestampToDate(double ts){
+    return DateTime.fromMillisecondsSinceEpoch(ts.toInt()*1000);
   }
 
 }

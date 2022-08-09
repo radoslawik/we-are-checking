@@ -1,3 +1,4 @@
+import 'package:hard_tyre/models/media/media_item.dart';
 import 'constructors.dart';
 import 'drivers.dart';
 
@@ -40,7 +41,7 @@ class StandingsList {
 
 }
 
-class DriverStanding {
+class DriverStanding extends MediaItem {
     DriverStanding({
         required this.position,
         required this.positionText,
@@ -67,7 +68,7 @@ class DriverStanding {
     );
 }
 
-class ConstructorStanding {
+class ConstructorStanding extends MediaItem {
     ConstructorStanding({
         required this.position,
         required this.positionText,

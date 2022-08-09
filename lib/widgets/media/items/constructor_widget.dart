@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hard_tyre/models/data/ergast/standings.dart';
+import 'package:hard_tyre/services/color_provider.dart';
+import 'package:hard_tyre/services/image_source_provider.dart';
+import 'package:hard_tyre/widgets/media/items/media_item_widget.dart';
+import 'media_item_widget.dart';
 
-import '../models/ergast/standings.dart';
-import '../services/color_provider.dart';
-import '../services/image_source_provider.dart';
-
-class ConstructorWidget extends StatefulWidget {
+class ConstructorWidget extends MediaItemWidget {
   const ConstructorWidget({Key? key, required this.standing}) : super(key: key);
   final ConstructorStanding standing;
   @override

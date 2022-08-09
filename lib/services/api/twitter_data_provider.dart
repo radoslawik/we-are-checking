@@ -1,8 +1,7 @@
 import 'dart:convert';
+import 'package:hard_tyre/models/data/twitter/tweet.dart';
 import 'package:http/http.dart' as http;
 import 'package:collection/collection.dart';
-
-import '../../models/twitter/tweet.dart';
 
 class TwitterDataProvider {
 
@@ -34,9 +33,9 @@ class TwitterDataProvider {
       if(response.statusCode == 200)
       {
         List<dynamic> decoded = jsonDecode(response.body)["data"].where((e) => e["id"] == e["conversation_id"]).toList();
-        return decoded.map((e) => Tweet(e["text"], e["id"], e["author_id"], _userIds.keys.firstWhereOrNull((k) => _userIds[k] == e['author_id']) ?? "Unknown",
-         e["created_at"], e["public_metrics"]["like_count"], e["public_metrics"]["retweet_count"], e["public_metrics"]["reply_count"])).toList();
-
+        return decoded.map((e) => Tweet(e["text"], _userIds.keys.firstWhereOrNull((k) => _userIds[k] == e['author_id']) ?? "Unknown",
+         DateTime.parse(e["created_at"]), e["id"], e["author_id"], e["public_metrics"]["like_count"],
+         e["public_metrics"]["retweet_count"], e["public_metrics"]["reply_count"])).toList();
       }
       return List.empty();
     }

@@ -1,10 +1,8 @@
 import 'package:collection/collection.dart';
+import 'package:hard_tyre/models/data/ergast/data.dart';
+import 'package:hard_tyre/models/data/ergast/drivers.dart';
+import 'package:hard_tyre/models/data/ergast/standings.dart';
 import 'package:http/http.dart' as http;
-
-import '../../models/ergast/data.dart';
-import '../../models/ergast/drivers.dart';
-import '../../models/ergast/standings.dart';
-
 
 class ErgastDataProvider {
 
