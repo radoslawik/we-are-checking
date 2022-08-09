@@ -18,7 +18,7 @@ class MediaTileWidget extends StatefulWidget {
   State<MediaTileWidget> createState() => _MediaTileWidgetState();
 }
 
-class _MediaTileWidgetState extends State<MediaTileWidget> {
+class _MediaTileWidgetState extends State<MediaTileWidget> with AutomaticKeepAliveClientMixin {
   List<MediaItemWidget> _feed = List.empty();
 
   void initialize() async {
@@ -37,7 +37,11 @@ class _MediaTileWidgetState extends State<MediaTileWidget> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
