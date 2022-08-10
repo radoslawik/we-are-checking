@@ -7,6 +7,8 @@ import 'package:hard_tyre/services/api/reddit_data_provider.dart';
 import 'package:hard_tyre/services/api/twitter_data_provider.dart';
 import 'package:hard_tyre/widgets/media/tiles/media_tile_widget.dart';
 
+import 'models/media/media_tile.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -23,93 +25,80 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         textTheme: TextTheme(
           headline1: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 52,
-              letterSpacing: 2,
-              height: 0.7,
-              color: Colors.black87
-            )
-          ),
+              textStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 52,
+                  letterSpacing: 2,
+                  height: 0.7,
+                  color: Colors.black87)),
           headline2: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 36,
-              letterSpacing: 1.5,
-              height: 0.8,
-              color: Colors.black87
-            )
-          ),
+              textStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 36,
+                  letterSpacing: 1.5,
+                  height: 0.8,
+                  color: Colors.black87)),
           headline3: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
-              letterSpacing: 1.5,
-              height: 0.8,
-              color: Colors.black87,
-            )
-          ),
+              textStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+            letterSpacing: 1.5,
+            height: 0.8,
+            color: Colors.black87,
+          )),
           headline4: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              fontSize: 24,
-              letterSpacing: 1.5,
-              height: 0.8,
-              color: Colors.black87,
-            )
-          ),
+              textStyle: const TextStyle(
+            fontSize: 24,
+            letterSpacing: 1.5,
+            height: 0.8,
+            color: Colors.black87,
+          )),
           headline5: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              letterSpacing: 1.5,
-              height: 0.8,
-              color: Colors.black87,
-            )
-          ),
+              textStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            letterSpacing: 1.5,
+            height: 0.8,
+            color: Colors.black87,
+          )),
           headline6: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              fontSize: 18,
-              letterSpacing: 1.5,
-              height: 0.8,
-              color: Colors.black87,
-            )
-          ),
+              textStyle: const TextStyle(
+            fontSize: 18,
+            letterSpacing: 1.5,
+            height: 0.8,
+            color: Colors.black87,
+          )),
           bodyText1: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              fontSize: 14,
-              height: 1.2,
-              color: Colors.black87,
-            )
-          ),
+              textStyle: const TextStyle(
+            fontSize: 14,
+            height: 1.2,
+            color: Colors.black87,
+          )),
           bodyText2: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              fontSize: 12,
-              height: 1.2,
-              color: Colors.black87,
-            )
-          ),
+              textStyle: const TextStyle(
+            fontSize: 12,
+            height: 1.2,
+            color: Colors.black87,
+          )),
           subtitle1: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              fontSize: 14,
-              height: 1.2,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            )
-          ),
+              textStyle: const TextStyle(
+            fontSize: 14,
+            height: 1.2,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          )),
           subtitle2: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              height: 1.2,
-              color: Colors.black87,
-            )
-          ),
+              textStyle: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            height: 1.2,
+            color: Colors.black87,
+          )),
           caption: GoogleFonts.poppins(
-            textStyle: const TextStyle(
-              fontSize: 10,
-              color: Colors.black87,
-            )
-          ),
+              textStyle: const TextStyle(
+            fontSize: 10,
+            color: Colors.black87,
+          )),
         ),
         // This is the theme of your application.
         //
@@ -123,7 +112,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Hard Tyre Home Page'),
+      home: const MyHomePage(title: 'we are checking'),
     );
   }
 }
@@ -147,17 +136,55 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late List<MediaTileWidget> _newsWidgets;
+  late List<MediaTile> _mainMedia;
+  List<MediaTile> _displayedMedia = [];
+  List<MediaTile>? _redditMedia;
+  List<MediaTile>? _twitterMedia;
+  bool _isDetailedMode = false;
+
+  void _showMoreReddit() {
+    _redditMedia ??= RedditDataProvider.subreddits
+        .map((s) => MediaTile('u/$s', FontAwesomeIcons.reddit,
+            () async => await RedditDataProvider.getHotPosts(s), null))
+        .toList();
+    setState(() {
+      _displayedMedia = _redditMedia!;
+      _isDetailedMode = true;
+    });
+  }
+
+  void _showMoreTwitter() {
+    _twitterMedia ??= TwitterDataProvider.usernames
+        .map((t) => MediaTile('@$t', FontAwesomeIcons.twitter,
+            () async => await TwitterDataProvider.getUserTweets(t), null))
+        .toList();
+    setState(() {
+      _displayedMedia = _twitterMedia!;
+      _isDetailedMode = true;
+    });
+  }
+
+  void _showHome() {
+    setState(() {
+      _displayedMedia = _mainMedia;
+      _isDetailedMode = false;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    _newsWidgets = [
-      const MediaTileWidget(title: 'Driver standings', icon: FontAwesomeIcons.trophy, getMedias: ErgastDataProvider.getDriverStandings),
-      const MediaTileWidget(title: 'Constructor standings', icon: FontAwesomeIcons.car, getMedias: ErgastDataProvider.getConstructorStandings),
-      const MediaTileWidget(title: 'Hot reddit posts', icon: FontAwesomeIcons.reddit, getMedias: RedditDataProvider.getAllHotPosts),
-      const MediaTileWidget(title: 'Recent tweets', icon: FontAwesomeIcons.twitter, getMedias: TwitterDataProvider.getTweetTimeline),
+    _mainMedia = [
+      MediaTile('Driver standings', FontAwesomeIcons.trophy,
+          ErgastDataProvider.getDriverStandings, null),
+      MediaTile('Constructor standings', FontAwesomeIcons.car,
+          ErgastDataProvider.getConstructorStandings, null),
+      MediaTile('Hot reddit posts', FontAwesomeIcons.reddit,
+          RedditDataProvider.getAllHotPosts, _showMoreReddit),
+      MediaTile('Recent tweets', FontAwesomeIcons.twitter,
+          TwitterDataProvider.getTweetTimeline, _showMoreTwitter),
     ];
+    _displayedMedia = _mainMedia;
   }
 
   @override
@@ -169,24 +196,29 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      // appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        // title: Text(widget.title),
-      // ),
-      body: ListView(
-            children: _newsWidgets
+        appBar: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title),
+          leading: _isDetailedMode
+              ? BackButton(
+                  onPressed: _showHome,
+                )
+              : null,
         ),
-      );
+        body: ListView(
+            children: _displayedMedia
+                .map((e) => MediaTileWidget(tile: e))
+                .toList(growable: false)));
   }
 }
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
   @override
-  Set<PointerDeviceKind> get dragDevices => { 
-    PointerDeviceKind.touch,
-    PointerDeviceKind.mouse,
-    // etc.
-  };
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        // etc.
+      };
 }

@@ -23,7 +23,7 @@ class _NewsItemWidgetState extends State<NewsItemWidget> {
   final _replyThresholds = [50, 100];
   final _retweetThresholds = [250, 500];
   final _thRedditColors = [Colors.green.shade700, Colors.orange.shade700];
-  final _thTwitterColors = [Colors.green.shade700, Colors.lightBlue.shade700 ];
+  final _thTwitterColors = [Colors.green.shade700, Colors.lightBlue.shade700];
   final _redditColor = Colors.orange.shade100;
   final _twitterColor = Colors.lightBlue.shade100;
 
@@ -37,40 +37,64 @@ class _NewsItemWidgetState extends State<NewsItemWidget> {
   @override
   void initState() {
     super.initState();
-    if(widget.news is RedditPost){
+    if (widget.news is RedditPost) {
       final post = widget.news as RedditPost;
-      _topCaptions = [ post.subreddit, 'u/${post.authorName}' ].map((e) => CaptionWidget(text: e)).toList();
-      _bottomCaptions = [ CaptionWidget(text: post.sourceUrl) ];
+      _topCaptions = [post.subreddit, 'u/${post.authorName}']
+          .map((e) => CaptionWidget(text: e))
+          .toList();
+      _bottomCaptions = [CaptionWidget(text: post.sourceUrl)];
       _indicators = [
-        IndicatorWidget(iconData: Icons.keyboard_double_arrow_up_rounded, size: 16.0,
-         number: post.ups, thresholds: _scoreThresholds, colors: _thRedditColors),
-        IndicatorWidget(iconData: Icons.comment_rounded, size: 16.0,
-         number: post.comments, thresholds: _commentThresholds, colors: _thRedditColors),
-        IndicatorWidget(iconData: Icons.celebration_rounded, size: 16.0,
-         number: post.awards, thresholds: _awardThresholds, colors: _thRedditColors),
+        IndicatorWidget(
+            iconData: Icons.keyboard_double_arrow_up_rounded,
+            size: 16.0,
+            number: post.ups,
+            thresholds: _scoreThresholds,
+            colors: _thRedditColors),
+        IndicatorWidget(
+            iconData: Icons.comment_rounded,
+            size: 16.0,
+            number: post.comments,
+            thresholds: _commentThresholds,
+            colors: _thRedditColors),
+        IndicatorWidget(
+            iconData: Icons.celebration_rounded,
+            size: 16.0,
+            number: post.awards,
+            thresholds: _awardThresholds,
+            colors: _thRedditColors),
       ];
       _imageUrl = post.imageUrl;
       _newsUrl = post.redditUrl;
       _hoverColor = _redditColor;
-    }
-    else if(widget.news is Tweet)
-    {
+    } else if (widget.news is Tweet) {
       final tweet = widget.news as Tweet;
-      _topCaptions = [ CaptionWidget(text: tweet.authorName) ];
+      _topCaptions = [CaptionWidget(text: '@${tweet.authorName}')];
       _bottomCaptions = [];
-      if(tweet.links.isNotEmpty){
+      if (tweet.links.isNotEmpty) {
         _bottomCaptions.add(CaptionWidget(text: tweet.links.first));
       }
-      if(tweet.hashtags.isNotEmpty){
+      if (tweet.hashtags.isNotEmpty) {
         _bottomCaptions.add(CaptionWidget(text: tweet.hashtags.first));
       }
       _indicators = [
-        IndicatorWidget(iconData: FontAwesomeIcons.solidHeart, size: 14.0,
-         number: tweet.likes, thresholds: _scoreThresholds, colors: _thTwitterColors),
-        IndicatorWidget(iconData: FontAwesomeIcons.share, size: 14.0,
-         number: tweet.retweet, thresholds: _retweetThresholds, colors: _thTwitterColors),
-        IndicatorWidget(iconData: FontAwesomeIcons.solidComment, size: 14.0,
-         number: tweet.reply, thresholds: _replyThresholds, colors: _thTwitterColors),
+        IndicatorWidget(
+            iconData: FontAwesomeIcons.solidHeart,
+            size: 14.0,
+            number: tweet.likes,
+            thresholds: _scoreThresholds,
+            colors: _thTwitterColors),
+        IndicatorWidget(
+            iconData: FontAwesomeIcons.share,
+            size: 14.0,
+            number: tweet.retweet,
+            thresholds: _retweetThresholds,
+            colors: _thTwitterColors),
+        IndicatorWidget(
+            iconData: FontAwesomeIcons.solidComment,
+            size: 14.0,
+            number: tweet.reply,
+            thresholds: _replyThresholds,
+            colors: _thTwitterColors),
       ];
       _imageUrl = tweet.imageUrl;
       _newsUrl = tweet.twitterUrl;
@@ -78,14 +102,19 @@ class _NewsItemWidgetState extends State<NewsItemWidget> {
     }
   }
 
-  String getTimeAgo(){
+  String getTimeAgo() {
     var timeAgo = DateTime.now().difference(widget.news.timeCreated);
-    return timeAgo.inHours.toString();
+    if (timeAgo.inDays > 0) {
+      return '${timeAgo.inDays}d ago';
+    } else if (timeAgo.inHours > 0) {
+      return '${timeAgo.inHours}h ago';
+    } else {
+      return '${timeAgo.inMinutes}mins ago';
+    }
   }
-  
+
   void openUrl() async {
-    if(_newsUrl != '')
-    {
+    if (_newsUrl != '') {
       final url = Uri.parse(_newsUrl);
       await launchUrl(url);
     }
@@ -111,30 +140,29 @@ class _NewsItemWidgetState extends State<NewsItemWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(4.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: _indicators
-                      ),
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: _indicators),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
-                          maxWidth: _imageUrl.startsWith('https://')
-                              ? 220
-                              : 300,
+                          maxWidth:
+                              _imageUrl.startsWith('https://') ? 220 : 300,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: _topCaptions
-                            ),
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: _topCaptions),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
                               child: Text(
                                 widget.news.title,
                                 style: Theme.of(context).textTheme.subtitle1,
@@ -143,11 +171,14 @@ class _NewsItemWidgetState extends State<NewsItemWidget> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(right: _imageUrl.startsWith('https://') ? 0 : 15.0),
+                              padding: EdgeInsets.only(
+                                  right: _imageUrl.startsWith('https://')
+                                      ? 0
+                                      : 15.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: _bottomCaptions
-                              ),
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: _bottomCaptions),
                             ),
                           ],
                         ),
@@ -166,11 +197,11 @@ class _NewsItemWidgetState extends State<NewsItemWidget> {
                     right: 0.0,
                     bottom: 20.0,
                     child: Container(
-                      color: Colors.white60,
+                      color: const Color.fromARGB(225, 255, 255, 255),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Text('${getTimeAgo()}h ago',
-                        style: Theme.of(context).textTheme.caption),
+                        child: Text(getTimeAgo(),
+                            style: Theme.of(context).textTheme.caption),
                       ),
                     ))
               ],
