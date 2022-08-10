@@ -197,19 +197,31 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
-          title: Text(widget.title),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.surround_sound),
+              const SizedBox(width: 10),
+              Text(widget.title),
+            ],
+          ),
           leading: _isDetailedMode
               ? BackButton(
                   onPressed: _showHome,
                 )
               : null,
         ),
-        body: ListView(
-            children: _displayedMedia
-                .map((e) => MediaTileWidget(tile: e))
-                .toList(growable: false)));
+        body: Padding(
+          padding: const EdgeInsets.only(top: 10.0, left: 16.0),
+          child: ListView(
+              physics: const BouncingScrollPhysics(),
+              children: _displayedMedia
+                  .map((e) => MediaTileWidget(tile: e))
+                  .toList(growable: false)),
+        ));
   }
 }
 

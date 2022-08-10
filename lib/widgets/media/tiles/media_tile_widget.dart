@@ -22,8 +22,7 @@ class _MediaTileWidgetState extends State<MediaTileWidget>
 
   void initialize() async {
     final medias = await widget.tile.getMedias();
-    if(mounted)
-    {
+    if (mounted) {
       setState(() {
         _feed = medias is List<NewsItem>
             ? medias.map((e) => NewsItemWidget(news: e)).toList()
@@ -94,6 +93,7 @@ class _MediaTileWidgetState extends State<MediaTileWidget>
                         child: CircularProgressIndicator(),
                       ))
                   : ListView(
+                      physics: const BouncingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
                       children: _feed,
                     )),
