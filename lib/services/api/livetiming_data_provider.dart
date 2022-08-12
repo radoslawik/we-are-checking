@@ -10,7 +10,8 @@ import 'package:hard_tyre/models/data/livetiming/telemetry.dart';
 class LivetimingDataProvider {
   final _cacheManager = DefaultCacheManager();
   static const _baseUrl = 'http://livetiming.formula1.com/static';
-  final _raceUrl = '$_baseUrl/2022/2022-07-31_Hungarian_Grand_Prix/2022-07-31_Race';
+  final _raceUrl =
+      '$_baseUrl/2022/2022-07-31_Hungarian_Grand_Prix/2022-07-31_Race';
   final _qualiUrl =
       '$_baseUrl/2022/2022-07-31_Hungarian_Grand_Prix/2022-07-30_Qualifying';
   final _carData = 'CarData.z.jsonStream';
@@ -18,7 +19,34 @@ class LivetimingDataProvider {
   final _lapTimes = 'TimingStats.jsonStream';
   final _heartbeatData = 'Heartbeat.jsonStream';
 
-  Future<File> getLivetimingFile(String url) async {
+  List<TelemetryEntry>? _telemetries;
+  List<PositionEntry>? _positions;
+  Map<String, LapTime>? _bestLaps;
+
+  Future<List<TelemetryEntry>> getTelemetries() async =>
+      _telemetries ?? await _retrieveTelemetries();
+
+  Future<List<PositionEntry>> getPositions() async =>
+      _positions ?? await _retrievePositions();
+
+  Future<Map<String, LapTime>> getPersonalBests() async =>
+      _bestLaps ?? await _retrievePersonalBests();
+
+  Future<LapTime?> getPersonalBest(String driverNumber) async =>
+      await getPersonalBests().then(
+          (dict) => dict.containsKey(driverNumber) ? dict[driverNumber] : null, onError: (v) => null);
+
+  Future<List<PositionEntry>> getPositionsDuringPersonalBest(String driverNumber) async {
+    final personalBest = await getPersonalBest(driverNumber);
+    if (personalBest != null) {
+      return await getPositions().then((value) => value.where((element) =>
+          element.time.compareTo(personalBest.when) < 0 &&
+          element.time.compareTo(personalBest.when.subtract(personalBest.time)) >= 0).toList(), onError: (v) => []);
+    }
+    return [];
+  }
+
+  Future<File> _getLivetimingFile(String url) async {
     var fileInfo = await _cacheManager.getFileFromCache(url);
     if (fileInfo != null) {
       return fileInfo.file;
@@ -29,7 +57,7 @@ class LivetimingDataProvider {
     }
   }
 
-  List<TelemetryEntry> parseCarDataRow(String row) {
+  List<TelemetryEntry> _parseCarDataRow(String row) {
     final rawInput = row.split('"').elementAt(1);
     final jsonString = LivetimingConversion.decodeToString(rawInput);
     List<dynamic> entries = jsonDecode(jsonString)["Entries"];
@@ -48,7 +76,7 @@ class LivetimingDataProvider {
     return telemetries;
   }
 
-  List<PositionEntry> parsePositionDataRow(String row) {
+  List<PositionEntry> _parsePositionDataRow(String row) {
     final rawInput = row.split('"').elementAt(1);
     final jsonString = LivetimingConversion.decodeToString(rawInput);
     List<dynamic> entries = jsonDecode(jsonString)["Position"];
@@ -66,31 +94,31 @@ class LivetimingDataProvider {
     return positions;
   }
 
-  Future<List<TelemetryEntry>> getTelemetries() async {
-    final file = await getLivetimingFile('$_qualiUrl/$_carData');
+  Future<List<TelemetryEntry>> _retrieveTelemetries() async {
+    final file = await _getLivetimingFile('$_qualiUrl/$_carData');
     final content = await file.readAsLines();
-    List<TelemetryEntry> telemetries = [];
+    _telemetries = [];
     for (var row in content) {
-      telemetries.addAll(parseCarDataRow(row));
+      _telemetries!.addAll(_parseCarDataRow(row));
     }
-    return telemetries;
+    return _telemetries!;
   }
 
-  Future<List<PositionEntry>> getPositions() async {
-    final file = await getLivetimingFile('$_qualiUrl/$_posData');
+  Future<List<PositionEntry>> _retrievePositions() async {
+    final file = await _getLivetimingFile('$_qualiUrl/$_posData');
     final content = await file.readAsLines();
-    List<PositionEntry> positions = [];
+    _positions = [];
     for (var row in content) {
-      positions.addAll(parsePositionDataRow(row));
+      _positions!.addAll(_parsePositionDataRow(row));
     }
-    return positions;
+    return _positions!;
   }
 
-  Future<Map<String, LapTime>> getPersonalBests() async {
-    final file = await getLivetimingFile('$_qualiUrl/$_lapTimes');
+  Future<Map<String, LapTime>> _retrievePersonalBests() async {
+    final file = await _getLivetimingFile('$_qualiUrl/$_lapTimes');
     final content = await file.readAsLines();
-    Map<String, LapTime> bestTimes = {};
-    final startTime = await getSessionStart();
+    final startTime = await _getSessionStartTime();
+    _bestLaps = {};
     if (startTime != null) {
       for (var row in content.skip(1)) {
         final ts = LivetimingConversion.parseDuration(row.substring(0, 11));
@@ -101,20 +129,20 @@ class LivetimingDataProvider {
             if (time is String) {
               final duration = LivetimingConversion.parseDuration(time);
               if (duration != null &&
-                  (!bestTimes.containsKey(car) ||
-                      bestTimes[car]!.time.compareTo(duration) > 0)) {
-                bestTimes[car] = LapTime(startTime.add(ts), duration);
+                  (!_bestLaps!.containsKey(car) ||
+                      _bestLaps![car]!.time.compareTo(duration) > 0)) {
+                _bestLaps![car] = LapTime(startTime.add(ts), duration);
               }
             }
           }
         }
       }
     }
-    return bestTimes;
+    return _bestLaps!;
   }
 
-  Future<DateTime?> getSessionStart() async {
-    final heartbeat = await getLivetimingFile('$_qualiUrl/$_heartbeatData');
+  Future<DateTime?> _getSessionStartTime() async {
+    final heartbeat = await _getLivetimingFile('$_qualiUrl/$_heartbeatData');
     final sessionTiming =
         await heartbeat.readAsLines().then((value) => value.first);
     final duration =
