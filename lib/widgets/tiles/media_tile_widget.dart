@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:hard_tyre/models/data/ergast/standings.dart';
+import 'package:hard_tyre/models/data/livetiming/position.dart';
 import 'package:hard_tyre/models/media/media_tile.dart';
 import 'package:hard_tyre/models/media/news_item.dart';
-import 'package:hard_tyre/widgets/media/items/constructor_widget.dart';
-import 'package:hard_tyre/widgets/media/items/driver_widget.dart';
-import 'package:hard_tyre/widgets/media/items/media_item_widget.dart';
-import 'package:hard_tyre/widgets/media/items/news_item_widget.dart';
+import 'package:hard_tyre/widgets/items/constructor_widget.dart';
+import 'package:hard_tyre/widgets/items/driver_widget.dart';
+import 'package:hard_tyre/widgets/items/lap_comparison_widget.dart';
+import 'package:hard_tyre/widgets/items/media_item_widget.dart';
+import 'package:hard_tyre/widgets/items/news_item_widget.dart';
 
 class MediaTileWidget extends StatefulWidget {
   const MediaTileWidget({Key? key, required this.tile}) : super(key: key);
@@ -30,7 +32,8 @@ class _MediaTileWidgetState extends State<MediaTileWidget>
                 ? medias.map((e) => DriverWidget(standing: e)).toList()
                 : medias is List<ConstructorStanding>
                     ? medias.map((e) => ConstructorWidget(standing: e)).toList()
-                    : [];
+                    : medias is List<LapPositionComparison> ?
+                    medias.map((e) => LapComparisonWidget(comparison: e)).toList() : [];
         _isLoading = false;
       });
     }

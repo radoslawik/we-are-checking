@@ -6,7 +6,7 @@ import 'package:hard_tyre/services/api/ergast_data_provider.dart';
 import 'package:hard_tyre/services/api/livetiming_data_provider.dart';
 import 'package:hard_tyre/services/api/reddit_data_provider.dart';
 import 'package:hard_tyre/services/api/twitter_data_provider.dart';
-import 'package:hard_tyre/widgets/media/tiles/media_tile_widget.dart';
+import 'package:hard_tyre/widgets/tiles/media_tile_widget.dart';
 
 import 'models/media/media_tile.dart';
 
@@ -193,6 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
           _reddit.getAllHotPosts, _showMoreReddit),
       MediaTile('Recent tweets', FontAwesomeIcons.twitter,
           _twitter.getTweetTimeline, _showMoreTwitter),
+      MediaTile('Lap comparisons', FontAwesomeIcons.codeCompare, () async => await _livetiming.getLapPositionComparisons("1", "44"), null)
     ];
     _displayedMedia = _mainMedia;
   }

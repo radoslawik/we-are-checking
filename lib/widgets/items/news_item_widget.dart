@@ -3,8 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hard_tyre/models/data/reddit/post.dart';
 import 'package:hard_tyre/models/data/twitter/tweet.dart';
 import 'package:hard_tyre/models/media/news_item.dart';
-import 'package:hard_tyre/widgets/media/helpers/caption_widget.dart';
-import 'package:hard_tyre/widgets/media/helpers/indicator_widget.dart';
+import 'package:hard_tyre/widgets/helpers/caption_widget.dart';
+import 'package:hard_tyre/widgets/helpers/indicator_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'media_item_widget.dart';
 

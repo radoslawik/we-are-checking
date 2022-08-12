@@ -34,17 +34,31 @@ class LivetimingDataProvider {
 
   Future<LapTime?> getPersonalBest(String driverNumber) async =>
       await getPersonalBests().then(
-          (dict) => dict.containsKey(driverNumber) ? dict[driverNumber] : null, onError: (v) => null);
+          (dict) => dict.containsKey(driverNumber) ? dict[driverNumber] : null,
+          onError: (v) => null);
 
-  Future<List<PositionEntry>> getPositionsDuringPersonalBest(String driverNumber) async {
+  Future<List<CarPosition>> getPositionsDuringPersonalBest(
+      String driverNumber) async {
     final personalBest = await getPersonalBest(driverNumber);
     if (personalBest != null) {
-      return await getPositions().then((value) => value.where((element) =>
-          element.time.compareTo(personalBest.when) < 0 &&
-          element.time.compareTo(personalBest.when.subtract(personalBest.time)) >= 0).toList(), onError: (v) => []);
+      return await getPositions().then(
+          (value) => value
+              .where((element) =>
+                  element.time.compareTo(personalBest.when) < 0 &&
+                  element.time.compareTo(
+                          personalBest.when.subtract(personalBest.time)) >=
+                      0)
+              .map((e) => e.data[driverNumber]!)
+              .toList(),
+          onError: (v) => []);
     }
     return [];
   }
+
+  Future<List<LapPositionComparison>> getLapPositionComparisons(
+          String id1, String id2) async => 
+      [ LapPositionComparison(await getPositionsDuringPersonalBest(id1),
+          await getPositionsDuringPersonalBest(id2)) ];
 
   Future<File> _getLivetimingFile(String url) async {
     var fileInfo = await _cacheManager.getFileFromCache(url);

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hard_tyre/models/data/ergast/standings.dart';
 import 'package:hard_tyre/services/color_provider.dart';
 import 'package:hard_tyre/services/image_source_provider.dart';
-import 'package:hard_tyre/widgets/media/items/media_item_widget.dart';
 import 'media_item_widget.dart';
 
 class ConstructorWidget extends MediaItemWidget {
