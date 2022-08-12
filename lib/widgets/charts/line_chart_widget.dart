@@ -34,7 +34,7 @@ class LineChartWidgetState extends State<LineChartWidget> {
                         */
                         borderData: FlBorderData(show: false),
                         lineTouchData: LineTouchData(enabled: false),
-                        clipData: FlClipData.all(),
+                        clipData: FlClipData.none(),
                         gridData: FlGridData(show: false),
                         lineBarsData: [
                           getChartLine(widget.driverOne, Colors.red),
@@ -77,7 +77,7 @@ class LineChartWidgetState extends State<LineChartWidget> {
     return LineChartBarData(
       spots: points,
       dotData: FlDotData(
-        show: true,
+        show: false,
       ),
       color: color,
       barWidth: 1.5,

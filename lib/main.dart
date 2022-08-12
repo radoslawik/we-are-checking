@@ -6,7 +6,7 @@ import 'package:hard_tyre/services/api/ergast_data_provider.dart';
 import 'package:hard_tyre/services/api/livetiming_data_provider.dart';
 import 'package:hard_tyre/services/api/reddit_data_provider.dart';
 import 'package:hard_tyre/services/api/twitter_data_provider.dart';
-import 'package:hard_tyre/widgets/tiles/media_tile_widget.dart';
+import 'package:hard_tyre/widgets/main_content_widget.dart';
 
 import 'models/media/media_tile.dart';
 
@@ -113,24 +113,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'we are checking'),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -143,20 +132,18 @@ class _MyHomePageState extends State<MyHomePage> {
   late RedditDataProvider _reddit;
 
   late List<MediaTile> _mainMedia;
-  List<MediaTile> _displayedMedia = [];
   List<MediaTile>? _redditMedia;
   List<MediaTile>? _twitterMedia;
-  bool _isDetailedMode = false;
 
   void _showMoreReddit() {
     _redditMedia ??= _reddit.subreddits
         .map((s) => MediaTile('u/$s', FontAwesomeIcons.reddit,
             () async => await _reddit.getHotPosts(s), null))
         .toList();
-    setState(() {
-      _displayedMedia = _redditMedia!;
-      _isDetailedMode = true;
-    });
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MainContentWidget(medias: _redditMedia!)));
   }
 
   void _showMoreTwitter() {
@@ -164,17 +151,10 @@ class _MyHomePageState extends State<MyHomePage> {
         .map((t) => MediaTile('@$t', FontAwesomeIcons.twitter,
             () async => await _twitter.getUserTweets(t), null))
         .toList();
-    setState(() {
-      _displayedMedia = _twitterMedia!;
-      _isDetailedMode = true;
-    });
-  }
-
-  void _showHome() {
-    setState(() {
-      _displayedMedia = _mainMedia;
-      _isDetailedMode = false;
-    });
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MainContentWidget(medias: _twitterMedia!)));
   }
 
   @override
@@ -193,46 +173,17 @@ class _MyHomePageState extends State<MyHomePage> {
           _reddit.getAllHotPosts, _showMoreReddit),
       MediaTile('Recent tweets', FontAwesomeIcons.twitter,
           _twitter.getTweetTimeline, _showMoreTwitter),
-      MediaTile('Lap comparisons', FontAwesomeIcons.codeCompare, () async => await _livetiming.getLapPositionComparisons("1", "44"), null)
+      MediaTile(
+          'Lap comparisons',
+          FontAwesomeIcons.codeCompare,
+          () async => await _livetiming.getLapPositionComparisons("1", "44"),
+          null)
     ];
-    _displayedMedia = _mainMedia;
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.surround_sound),
-              const SizedBox(width: 10),
-              Text(widget.title),
-            ],
-          ),
-          leading: _isDetailedMode
-              ? BackButton(
-                  onPressed: _showHome,
-                )
-              : null,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 10.0, left: 16.0),
-          child: ListView(
-              physics: const BouncingScrollPhysics(),
-              children: _displayedMedia
-                  .map((e) => MediaTileWidget(tile: e))
-                  .toList(growable: false)),
-        ));
+    return MainContentWidget(medias: _mainMedia);
   }
 }
 
