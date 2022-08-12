@@ -12,4 +12,23 @@ class LivetimingConversion {
     final outputString = utf8.decode(outputBytes);
     return outputString;
   }
+
+  static Duration? parseDuration(String s) {
+    int? hours = 0;
+    int? minutes = 0;
+    final parts = s.split(':');
+    if (parts.length > 2) {
+      hours = int.tryParse(parts[parts.length - 3]);
+    }
+    if (parts.length > 1) {
+      minutes = int.tryParse(parts[parts.length - 2]);
+    }
+    final microseconds = double.tryParse(parts[parts.length - 1]);
+    return hours != null && minutes != null && microseconds != null
+        ? Duration(
+            hours: hours,
+            minutes: minutes,
+            microseconds: (microseconds * 1000000).round())
+        : null;
+  }
 }
