@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hard_tyre/services/api/ergast_data_provider.dart';
+import 'package:hard_tyre/services/api/livetiming_data_provider.dart';
 import 'package:hard_tyre/services/api/reddit_data_provider.dart';
 import 'package:hard_tyre/services/api/twitter_data_provider.dart';
 import 'package:hard_tyre/widgets/media/tiles/media_tile_widget.dart';
@@ -136,6 +137,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late ErgastDataProvider _ergast;
+  late TwitterDataProvider _twitter;
+  late LivetimingDataProvider _livetiming;
+  late RedditDataProvider _reddit;
+
   late List<MediaTile> _mainMedia;
   List<MediaTile> _displayedMedia = [];
   List<MediaTile>? _redditMedia;
@@ -143,9 +149,9 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isDetailedMode = false;
 
   void _showMoreReddit() {
-    _redditMedia ??= RedditDataProvider.subreddits
+    _redditMedia ??= _reddit.subreddits
         .map((s) => MediaTile('u/$s', FontAwesomeIcons.reddit,
-            () async => await RedditDataProvider.getHotPosts(s), null))
+            () async => await _reddit.getHotPosts(s), null))
         .toList();
     setState(() {
       _displayedMedia = _redditMedia!;
@@ -154,9 +160,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _showMoreTwitter() {
-    _twitterMedia ??= TwitterDataProvider.usernames
+    _twitterMedia ??= _twitter.usernames
         .map((t) => MediaTile('@$t', FontAwesomeIcons.twitter,
-            () async => await TwitterDataProvider.getUserTweets(t), null))
+            () async => await _twitter.getUserTweets(t), null))
         .toList();
     setState(() {
       _displayedMedia = _twitterMedia!;
@@ -174,15 +180,19 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    _ergast = ErgastDataProvider();
+    _twitter = TwitterDataProvider();
+    _reddit = RedditDataProvider();
+    _livetiming = LivetimingDataProvider();
     _mainMedia = [
       MediaTile('Driver standings', FontAwesomeIcons.trophy,
-          ErgastDataProvider.getDriverStandings, null),
+          _ergast.getDriverStandings, null),
       MediaTile('Constructor standings', FontAwesomeIcons.car,
-          ErgastDataProvider.getConstructorStandings, null),
+          _ergast.getConstructorStandings, null),
       MediaTile('Hot reddit posts', FontAwesomeIcons.reddit,
-          RedditDataProvider.getAllHotPosts, _showMoreReddit),
+          _reddit.getAllHotPosts, _showMoreReddit),
       MediaTile('Recent tweets', FontAwesomeIcons.twitter,
-          TwitterDataProvider.getTweetTimeline, _showMoreTwitter),
+          _twitter.getTweetTimeline, _showMoreTwitter),
     ];
     _displayedMedia = _mainMedia;
   }

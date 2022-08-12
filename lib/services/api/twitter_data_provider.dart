@@ -5,14 +5,14 @@ import 'package:collection/collection.dart';
 import '../../helpers/constants.dart';
 
 class TwitterDataProvider {
-  static const String _endpoint = 'https://api.twitter.com/2';
+  final String _endpoint = 'https://api.twitter.com/2';
   static const String _token =
       'AAAAAAAAAAAAAAAAAAAAANp%2BfgEAAAAAe52687UpZHtt9p3xT86JwT%2BpMS8%3DVuSGpLPq7M726pfWOKBHqTzWlxpb15GO4GZ33pOaWP1PUy2gBR';
-  static const _headers = {
+  final _headers = {
     'authorization': 'Bearer $_token',
     'user-agent': Constants.userAgent,
   };
-  static const List<String> usernames = [
+  final usernames = [
     "F1",
     "redbullracing",
     "ScuderiaFerrari",
@@ -25,11 +25,11 @@ class TwitterDataProvider {
     "alfaromeoorlen",
     "WilliamsRacing"
   ];
-  static final Map<String, String> _userIds = {};
-  static final List<Tweet> _tweets = [];
-  static final Map<String, List<Tweet>> _tweetsMap = {};
+  final Map<String, String> _userIds = {};
+  final List<Tweet> _tweets = [];
+  final Map<String, List<Tweet>> _tweetsMap = {};
 
-  static Future<void> _getUserIds() async {
+  Future<void> _getUserIds() async {
     final response = await http.get(
         Uri.parse("$_endpoint/users/by?usernames=${usernames.join(',')}"),
         headers: _headers);
@@ -41,7 +41,7 @@ class TwitterDataProvider {
     }
   }
 
-  static Future<List<Tweet>> getUserTweets(String name,
+  Future<List<Tweet>> getUserTweets(String name,
       [bool forceRefresh = false]) async {
     final previous = _tweetsMap[name];
     if (forceRefresh || previous == null) {
@@ -64,7 +64,7 @@ class TwitterDataProvider {
     return previous?.take(10).toList() ?? List.empty();
   }
 
-  static Future<List<Tweet>> getTweetTimeline([bool forceRefresh = false]) async {
+  Future<List<Tweet>> getTweetTimeline([bool forceRefresh = false]) async {
     if(forceRefresh || _tweets.isEmpty){
       if (_userIds.isEmpty) {
         await _getUserIds();

@@ -5,14 +5,14 @@ import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
 class RedditDataProvider {
-  static const String _basicAuth = 'Basic R29uWWFMTW9nZ09pTjB5Wl9Fa2FlZzo=';
-  static const String _endpoint = 'https://oauth.reddit.com';
-  static const subreddits = ["formula1", "formuladank", "F1Technical", "F1FeederSeries", "GrandPrixRacing"];
-  static String? _token;
-  static final Map<String, List<RedditPost>> _postMap = {};
-  static final List<RedditPost> _hotPosts = [];
+  final _basicAuth = 'Basic R29uWWFMTW9nZ09pTjB5Wl9Fa2FlZzo=';
+  final String _endpoint = 'https://oauth.reddit.com';
+  final subreddits = ["formula1", "formuladank", "F1Technical", "F1FeederSeries", "GrandPrixRacing"];
+  String? _token;
+  final Map<String, List<RedditPost>> _postMap = {};
+  final List<RedditPost> _hotPosts = [];
 
-  static Future<String?> _getAccessToken() async {
+  Future<String?> _getAccessToken() async {
     final headers = {
       'authorization': _basicAuth,
       'user-agent': Constants.userAgent,
@@ -35,7 +35,7 @@ class RedditDataProvider {
     return null;
   }
 
-  static Future<List<RedditPost>> getAllHotPosts(
+  Future<List<RedditPost>> getAllHotPosts(
       [bool forceRefresh = false]) async {
     if (forceRefresh || _hotPosts.isEmpty) {
       _token ??= await _getAccessToken();
@@ -51,7 +51,7 @@ class RedditDataProvider {
     return _hotPosts.take(15).toList();
   }
 
-  static Future<List<RedditPost>> getHotPosts(String subreddit,
+  Future<List<RedditPost>> getHotPosts(String subreddit,
       [bool forceRefresh = false]) async {
     if (!forceRefresh && _postMap[subreddit] is List<RedditPost>) {
       return _postMap[subreddit] as List<RedditPost>;
@@ -75,7 +75,7 @@ class RedditDataProvider {
     return List.empty();
   }
 
-  static Map<String, List<RedditPost>> getGroupedHotPosts() {
+  Map<String, List<RedditPost>> getGroupedHotPosts() {
     return _postMap;
   }
 }

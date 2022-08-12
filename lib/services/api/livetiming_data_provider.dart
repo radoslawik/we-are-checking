@@ -8,18 +8,17 @@ import 'package:hard_tyre/models/data/livetiming/position.dart';
 import 'package:hard_tyre/models/data/livetiming/telemetry.dart';
 
 class LivetimingDataProvider {
-  static final _cacheManager = DefaultCacheManager();
+  final _cacheManager = DefaultCacheManager();
   static const _baseUrl = 'http://livetiming.formula1.com/static';
-  static const _raceUrl =
-      '$_baseUrl/2022/2022-07-31_Hungarian_Grand_Prix/2022-07-31_Race';
-  static const _qualiUrl =
+  final _raceUrl = '$_baseUrl/2022/2022-07-31_Hungarian_Grand_Prix/2022-07-31_Race';
+  final _qualiUrl =
       '$_baseUrl/2022/2022-07-31_Hungarian_Grand_Prix/2022-07-30_Qualifying';
-  static const _carData = 'CarData.z.jsonStream';
-  static const _posData = 'Position.z.jsonStream';
-  static const _lapTimes = 'TimingStats.jsonStream';
-  static const _heartbeatData = 'Heartbeat.jsonStream';
+  final _carData = 'CarData.z.jsonStream';
+  final _posData = 'Position.z.jsonStream';
+  final _lapTimes = 'TimingStats.jsonStream';
+  final _heartbeatData = 'Heartbeat.jsonStream';
 
-  static Future<File> getLivetimingFile(String url) async {
+  Future<File> getLivetimingFile(String url) async {
     var fileInfo = await _cacheManager.getFileFromCache(url);
     if (fileInfo != null) {
       return fileInfo.file;
@@ -30,7 +29,7 @@ class LivetimingDataProvider {
     }
   }
 
-  static List<TelemetryEntry> parseCarDataRow(String row) {
+  List<TelemetryEntry> parseCarDataRow(String row) {
     final rawInput = row.split('"').elementAt(1);
     final jsonString = LivetimingConversion.decodeToString(rawInput);
     List<dynamic> entries = jsonDecode(jsonString)["Entries"];
@@ -49,7 +48,7 @@ class LivetimingDataProvider {
     return telemetries;
   }
 
-  static List<PositionEntry> parsePositionDataRow(String row) {
+  List<PositionEntry> parsePositionDataRow(String row) {
     final rawInput = row.split('"').elementAt(1);
     final jsonString = LivetimingConversion.decodeToString(rawInput);
     List<dynamic> entries = jsonDecode(jsonString)["Position"];
@@ -67,7 +66,7 @@ class LivetimingDataProvider {
     return positions;
   }
 
-  static Future<List<TelemetryEntry>> getTelemetries() async {
+  Future<List<TelemetryEntry>> getTelemetries() async {
     final file = await getLivetimingFile('$_qualiUrl/$_carData');
     final content = await file.readAsLines();
     List<TelemetryEntry> telemetries = [];
@@ -77,7 +76,7 @@ class LivetimingDataProvider {
     return telemetries;
   }
 
-  static Future<List<PositionEntry>> getPositions() async {
+  Future<List<PositionEntry>> getPositions() async {
     final file = await getLivetimingFile('$_qualiUrl/$_posData');
     final content = await file.readAsLines();
     List<PositionEntry> positions = [];
@@ -87,7 +86,7 @@ class LivetimingDataProvider {
     return positions;
   }
 
-  static Future<Map<String, LapTime>> getPersonalBests() async {
+  Future<Map<String, LapTime>> getPersonalBests() async {
     final file = await getLivetimingFile('$_qualiUrl/$_lapTimes');
     final content = await file.readAsLines();
     Map<String, LapTime> bestTimes = {};
@@ -114,7 +113,7 @@ class LivetimingDataProvider {
     return bestTimes;
   }
 
-  static Future<DateTime?> getSessionStart() async {
+  Future<DateTime?> getSessionStart() async {
     final heartbeat = await getLivetimingFile('$_qualiUrl/$_heartbeatData');
     final sessionTiming =
         await heartbeat.readAsLines().then((value) => value.first);

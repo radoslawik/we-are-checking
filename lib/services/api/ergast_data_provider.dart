@@ -5,13 +5,13 @@ import 'package:hard_tyre/models/data/ergast/standings.dart';
 import 'package:http/http.dart' as http;
 
 class ErgastDataProvider {
-  static const String _baseUrl = "https://ergast.com/api/f1";
-  static const String _extension = "json";
-  static List<Driver>? _drivers;
-  static List<DriverStanding>? _driverStandings;
-  static List<ConstructorStanding>? _constructorStandings;
+  final _baseUrl = "https://ergast.com/api/f1";
+  final _extension = "json";
+  List<Driver>? _drivers;
+  List<DriverStanding>? _driverStandings;
+  List<ConstructorStanding>? _constructorStandings;
 
-  static Future<List<Driver>> getDrivers(
+  Future<List<Driver>> getDrivers(
       [int? season, bool forceRefresh = false]) async {
     if (_drivers == null || forceRefresh) {
       final data = await _fetchData("${season ?? "current"}/drivers");
@@ -20,7 +20,7 @@ class ErgastDataProvider {
     return _drivers ?? List.empty();
   }
 
-  static Future<List<DriverStanding>> getDriverStandings(
+  Future<List<DriverStanding>> getDriverStandings(
       [int? season, bool forceRefresh = false]) async {
     if (_driverStandings == null || forceRefresh) {
       final data = await _fetchData("${season ?? "current"}/driverStandings");
@@ -30,7 +30,7 @@ class ErgastDataProvider {
     return _driverStandings ?? List.empty();
   }
 
-  static Future<List<ConstructorStanding>> getConstructorStandings(
+  Future<List<ConstructorStanding>> getConstructorStandings(
       [int? season, bool forceRefresh = false]) async {
     if (_constructorStandings == null || forceRefresh) {
       final data =
@@ -41,7 +41,7 @@ class ErgastDataProvider {
     return _constructorStandings ?? List.empty();
   }
 
-  static Future<MrData?> _fetchData(String complement) async {
+  Future<MrData?> _fetchData(String complement) async {
     final response =
         await http.get(Uri.parse("$_baseUrl/$complement.$_extension"));
     return response.statusCode == 200 ? dataFromJson(response.body) : null;
