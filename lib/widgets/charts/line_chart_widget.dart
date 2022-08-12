@@ -1,10 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:hard_tyre/models/data/livetiming/lap_time.dart';
 
 class LineChartWidget extends StatefulWidget {
-  const LineChartWidget({Key? key, required this.driverOne, required this.driverTwo}) : super(key: key);
-  final List<FlSpot> driverOne;
-  final List<FlSpot> driverTwo;
+  const LineChartWidget({Key? key, required this.data}) : super(key: key);
+  final Map<String, List<LapPosition>> data;
 
   @override
   LineChartWidgetState createState() => LineChartWidgetState();
@@ -18,8 +18,7 @@ class LineChartWidgetState extends State<LineChartWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.driverOne.isNotEmpty
-        ? Card(
+    return Card(
             elevation: 2,
             child: Padding(
               padding: const EdgeInsets.all(7),
@@ -36,10 +35,7 @@ class LineChartWidgetState extends State<LineChartWidget> {
                         lineTouchData: LineTouchData(enabled: false),
                         clipData: FlClipData.none(),
                         gridData: FlGridData(show: false),
-                        lineBarsData: [
-                          getChartLine(widget.driverOne, Colors.red),
-                          getChartLine(widget.driverTwo, Colors.blue),
-                        ],
+                        lineBarsData: getChartLines(widget.data),
                         titlesData: FlTitlesData(show: false)
                         /*
                         titlesData: FlTitlesData(
@@ -69,22 +65,31 @@ class LineChartWidgetState extends State<LineChartWidget> {
                     ),
                   )
                 )
-        )
-        : Container();
+        );
   }
 
-  LineChartBarData getChartLine(List<FlSpot> points, Color color) {
+  LineChartBarData getChartLine(List<FlSpot> points, String number) {
     return LineChartBarData(
       spots: points,
       dotData: FlDotData(
         show: false,
       ),
-      color: color,
+      color: number == "1" ? Colors.blue : number == "44" ? Colors.red : Colors.green,
       barWidth: 1.5,
       isCurved: true,
     );
   }
 
+  List<LineChartBarData> getChartLines(Map<String, List<LapPosition>> data) {
+    final lps = data.keys.map((e) => data[e]!);
+    List<LineChartBarData> plots = [];
+    for (var lp in lps)
+    {
+      final points = lp.map((e) => FlSpot(e.position.x.toDouble(), e.position.y.toDouble())).toList();
+      plots.add(getChartLine(points, lp.first.driverNumber));
+    }
+    return plots;
+  }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
@@ -117,4 +122,5 @@ class LineChartWidgetState extends State<LineChartWidget> {
   void dispose() {
     super.dispose();
   }
+  
 }

@@ -15,10 +15,3 @@ class CarPosition {
 
   CarPosition(this.status, this.x, this.y, this.z);
 }
-
-class LapPositionComparison extends MediaItem {
-  final List<CarPosition> driverOne;
-  final List<CarPosition> driverTwo;
-
-  LapPositionComparison(this.driverOne, this.driverTwo);
-}

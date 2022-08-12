@@ -37,7 +37,7 @@ class LivetimingDataProvider {
           (dict) => dict.containsKey(driverNumber) ? dict[driverNumber] : null,
           onError: (v) => null);
 
-  Future<List<CarPosition>> getPositionsDuringPersonalBest(
+  Future<List<LapPosition>> getPositionsDuringPersonalBest(
       String driverNumber) async {
     final personalBest = await getPersonalBest(driverNumber);
     if (personalBest != null) {
@@ -48,17 +48,20 @@ class LivetimingDataProvider {
                   element.time.compareTo(
                           personalBest.when.subtract(personalBest.time)) >=
                       0)
-              .map((e) => e.data[driverNumber]!)
+              .map((e) => LapPosition(driverNumber, e.time, e.data[driverNumber]!))
               .toList(),
           onError: (v) => []);
     }
     return [];
   }
 
-  Future<List<LapPositionComparison>> getLapPositionComparisons(
-          String id1, String id2) async => 
-      [ LapPositionComparison(await getPositionsDuringPersonalBest(id1),
-          await getPositionsDuringPersonalBest(id2)) ];
+  Future<LapPositionComparison> getLapPositionComparisons(List<String> driverIds) async {
+    Map<String, List<LapPosition>> dict = {};
+    for(var driver in driverIds) {
+      dict[driver] = await getPositionsDuringPersonalBest(driver);
+    }
+    return LapPositionComparison(dict);
+  }
 
   Future<File> _getLivetimingFile(String url) async {
     var fileInfo = await _cacheManager.getFileFromCache(url);

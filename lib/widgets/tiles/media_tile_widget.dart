@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hard_tyre/models/data/ergast/standings.dart';
+import 'package:hard_tyre/models/data/livetiming/lap_time.dart';
 import 'package:hard_tyre/models/data/livetiming/position.dart';
 import 'package:hard_tyre/models/media/media_tile.dart';
 import 'package:hard_tyre/models/media/news_item.dart';

@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hard_tyre/models/data/livetiming/lap_time.dart';
 import 'package:hard_tyre/services/api/ergast_data_provider.dart';
 import 'package:hard_tyre/services/api/livetiming_data_provider.dart';
 import 'package:hard_tyre/services/api/reddit_data_provider.dart';
@@ -176,9 +177,14 @@ class _MyHomePageState extends State<MyHomePage> {
       MediaTile(
           'Lap comparisons',
           FontAwesomeIcons.codeCompare,
-          () async => await _livetiming.getLapPositionComparisons("1", "44"),
+          getComparisons,
           null)
     ];
+  }
+
+  Future<List<LapPositionComparison>> getComparisons() async {
+    final comp = await _livetiming.getLapPositionComparisons(["1", "44"]);
+    return [ comp ];
   }
 
   @override
