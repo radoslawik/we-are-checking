@@ -1,12 +1,11 @@
 import 'dart:convert';
+import 'package:hard_tyre/helpers/constants.dart';
 import 'package:hard_tyre/models/data/reddit/post.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
 class RedditDataProvider {
   static const String _basicAuth = 'Basic R29uWWFMTW9nZ09pTjB5Wl9Fa2FlZzo=';
-  static const String _userAgent =
-      'windows:com.example.wearechecking:v0.0.1 (by /u/Hanyanhisi)';
   static const String _endpoint = 'https://oauth.reddit.com';
   static const subreddits = ["formula1", "formuladank", "F1Technical", "F1FeederSeries", "GrandPrixRacing"];
   static String? _token;
@@ -16,7 +15,7 @@ class RedditDataProvider {
   static Future<String?> _getAccessToken() async {
     final headers = {
       'authorization': _basicAuth,
-      'user-agent': _userAgent,
+      'user-agent': Constants.userAgent,
     };
     final body = {
       'grant_type': '$_endpoint/grants/installed_client',
@@ -60,7 +59,7 @@ class RedditDataProvider {
 
     final headers = {
       'authorization': 'Bearer $_token',
-      'user-agent': _userAgent,
+      'user-agent': Constants.userAgent,
     };
     final response = await http.get(
         Uri.parse("$_endpoint/r/$subreddit/hot?limit=15"),

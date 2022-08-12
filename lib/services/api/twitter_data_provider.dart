@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:hard_tyre/models/data/twitter/tweet.dart';
 import 'package:http/http.dart' as http;
 import 'package:collection/collection.dart';
+import '../../helpers/constants.dart';
 
 class TwitterDataProvider {
   static const String _endpoint = 'https://api.twitter.com/2';
@@ -9,7 +10,7 @@ class TwitterDataProvider {
       'AAAAAAAAAAAAAAAAAAAAANp%2BfgEAAAAAe52687UpZHtt9p3xT86JwT%2BpMS8%3DVuSGpLPq7M726pfWOKBHqTzWlxpb15GO4GZ33pOaWP1PUy2gBR';
   static const _headers = {
     'authorization': 'Bearer $_token',
-    'user-agent': 'windows:com.example.wearechecking:v0.0.1 (by @radoslawik)',
+    'user-agent': Constants.userAgent,
   };
   static const List<String> usernames = [
     "F1",
