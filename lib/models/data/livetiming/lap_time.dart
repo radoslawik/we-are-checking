@@ -1,5 +1,5 @@
 class LapTime {
-  final Duration when;
+  final DateTime when;
   final Duration time;
 
   LapTime(this.when, this.time);

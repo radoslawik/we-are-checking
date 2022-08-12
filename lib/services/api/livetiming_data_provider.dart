@@ -17,6 +17,7 @@ class LivetimingDataProvider {
   static const _carData = 'CarData.z.jsonStream';
   static const _posData = 'Position.z.jsonStream';
   static const _lapTimes = 'TimingStats.jsonStream';
+  static const _heartbeatData = 'Heartbeat.jsonStream';
 
   static Future<File> getLivetimingFile(String url) async {
     var fileInfo = await _cacheManager.getFileFromCache(url);
@@ -67,7 +68,7 @@ class LivetimingDataProvider {
   }
 
   static Future<List<TelemetryEntry>> getTelemetries() async {
-    final file = await getLivetimingFile('$_raceUrl/$_carData');
+    final file = await getLivetimingFile('$_qualiUrl/$_carData');
     final content = await file.readAsLines();
     List<TelemetryEntry> telemetries = [];
     for (var row in content) {
@@ -77,7 +78,7 @@ class LivetimingDataProvider {
   }
 
   static Future<List<PositionEntry>> getPositions() async {
-    final file = await getLivetimingFile('$_raceUrl/$_posData');
+    final file = await getLivetimingFile('$_qualiUrl/$_posData');
     final content = await file.readAsLines();
     List<PositionEntry> positions = [];
     for (var row in content) {
@@ -90,23 +91,37 @@ class LivetimingDataProvider {
     final file = await getLivetimingFile('$_qualiUrl/$_lapTimes');
     final content = await file.readAsLines();
     Map<String, LapTime> bestTimes = {};
-    for (var row in content.skip(1)) {
-      final ts = LivetimingConversion.parseDuration(row.substring(0, 11));
-      if (ts != null) {
-        Map<String, dynamic> data = jsonDecode(row.substring(12))["Lines"];
-        for (var car in data.keys) {
-          final time = data[car]["PersonalBestLapTime"]?["Value"];
-          if (time is String) {
-            final duration = LivetimingConversion.parseDuration(time);
-            if (duration != null &&
-                (!bestTimes.containsKey(car) ||
-                    bestTimes[car]!.time.compareTo(duration) > 0)) {
-              bestTimes[car] = LapTime(ts, duration);
+    final startTime = await getSessionStart();
+    if (startTime != null) {
+      for (var row in content.skip(1)) {
+        final ts = LivetimingConversion.parseDuration(row.substring(0, 11));
+        if (ts != null) {
+          Map<String, dynamic> data = jsonDecode(row.substring(12))["Lines"];
+          for (var car in data.keys) {
+            final time = data[car]["PersonalBestLapTime"]?["Value"];
+            if (time is String) {
+              final duration = LivetimingConversion.parseDuration(time);
+              if (duration != null &&
+                  (!bestTimes.containsKey(car) ||
+                      bestTimes[car]!.time.compareTo(duration) > 0)) {
+                bestTimes[car] = LapTime(startTime.add(ts), duration);
+              }
             }
           }
         }
       }
     }
     return bestTimes;
+  }
+
+  static Future<DateTime?> getSessionStart() async {
+    final heartbeat = await getLivetimingFile('$_qualiUrl/$_heartbeatData');
+    final sessionTiming =
+        await heartbeat.readAsLines().then((value) => value.first);
+    final duration =
+        LivetimingConversion.parseDuration(sessionTiming.substring(0, 11));
+    final utc =
+        DateTime.tryParse(jsonDecode(sessionTiming.substring(12))["Utc"]);
+    return duration != null && utc != null ? utc.subtract(duration) : null;
   }
 }
