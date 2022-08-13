@@ -5,9 +5,13 @@ import 'package:collection/collection.dart';
 import '../../helpers/constants.dart';
 
 class TwitterDataProvider {
+  // Singleton
+  static final TwitterDataProvider _singleton = TwitterDataProvider._internal();
+  factory TwitterDataProvider() => _singleton;
+  TwitterDataProvider._internal();
+
   final String _endpoint = 'https://api.twitter.com/2';
-  static const String _token =
-      'AAAAAAAAAAAAAAAAAAAAANp%2BfgEAAAAAe52687UpZHtt9p3xT86JwT%2BpMS8%3DVuSGpLPq7M726pfWOKBHqTzWlxpb15GO4GZ33pOaWP1PUy2gBR';
+  static const String _token = 'AAAAAAAAAAAAAAAAAAAAANp%2BfgEAAAAAe52687UpZHtt9p3xT86JwT%2BpMS8%3DVuSGpLPq7M726pfWOKBHqTzWlxpb15GO4GZ33pOaWP1PUy2gBR';
   final _headers = {
     'authorization': 'Bearer $_token',
     'user-agent': Constants.userAgent,
@@ -30,9 +34,7 @@ class TwitterDataProvider {
   final Map<String, List<Tweet>> _tweetsMap = {};
 
   Future<void> _getUserIds() async {
-    final response = await http.get(
-        Uri.parse("$_endpoint/users/by?usernames=${usernames.join(',')}"),
-        headers: _headers);
+    final response = await http.get(Uri.parse("$_endpoint/users/by?usernames=${usernames.join(',')}"), headers: _headers);
     if (response.statusCode == 200) {
       List<dynamic> decoded = jsonDecode(response.body)["data"];
       for (var e in decoded) {
@@ -41,8 +43,7 @@ class TwitterDataProvider {
     }
   }
 
-  Future<List<Tweet>> getUserTweets(String name,
-      [bool forceRefresh = false]) async {
+  Future<List<Tweet>> getUserTweets(String name, [bool forceRefresh = false]) async {
     final previous = _tweetsMap[name];
     if (forceRefresh || previous == null) {
       final id = _userIds[name];
@@ -53,19 +54,15 @@ class TwitterDataProvider {
       if (response.statusCode == 200) {
         dynamic decoded = jsonDecode(response.body);
         List<dynamic> media = decoded["includes"]?["media"] ?? [];
-        List<dynamic> decodedData = decoded["data"]
-            .where((e) => e["id"] == e["conversation_id"])
-            .toList();
-        return decodedData
-            .map((e) => Tweet(e, media, _userIds.keys.firstWhereOrNull((k) => _userIds[k] == e['author_id']) ?? "Unknown"))
-            .toList();
+        List<dynamic> decodedData = decoded["data"].where((e) => e["id"] == e["conversation_id"]).toList();
+        return decodedData.map((e) => Tweet(e, media, _userIds.keys.firstWhereOrNull((k) => _userIds[k] == e['author_id']) ?? "Unknown")).toList();
       }
     }
     return previous?.take(10).toList() ?? List.empty();
   }
 
   Future<List<Tweet>> getTweetTimeline([bool forceRefresh = false]) async {
-    if(forceRefresh || _tweets.isEmpty){
+    if (forceRefresh || _tweets.isEmpty) {
       if (_userIds.isEmpty) {
         await _getUserIds();
       }

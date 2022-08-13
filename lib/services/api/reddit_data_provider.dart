@@ -5,6 +5,11 @@ import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
 class RedditDataProvider {
+  // Singleton
+  static final RedditDataProvider _singleton = RedditDataProvider._internal();
+  factory RedditDataProvider() => _singleton;
+  RedditDataProvider._internal();
+
   final _basicAuth = 'Basic R29uWWFMTW9nZ09pTjB5Wl9Fa2FlZzo=';
   final String _endpoint = 'https://oauth.reddit.com';
   final subreddits = ["formula1", "formuladank", "F1Technical", "F1FeederSeries", "GrandPrixRacing"];
@@ -21,10 +26,7 @@ class RedditDataProvider {
       'grant_type': '$_endpoint/grants/installed_client',
       'device_id': const Uuid().v4(),
     };
-    final response = await http.post(
-        Uri.parse("https://www.reddit.com/api/v1/access_token"),
-        headers: headers,
-        body: body);
+    final response = await http.post(Uri.parse("https://www.reddit.com/api/v1/access_token"), headers: headers, body: body);
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseBody = jsonDecode(response.body);
@@ -35,8 +37,7 @@ class RedditDataProvider {
     return null;
   }
 
-  Future<List<RedditPost>> getAllHotPosts(
-      [bool forceRefresh = false]) async {
+  Future<List<RedditPost>> getAllHotPosts([bool forceRefresh = false]) async {
     if (forceRefresh || _hotPosts.isEmpty) {
       _token ??= await _getAccessToken();
       if (_token != null) {
@@ -51,8 +52,7 @@ class RedditDataProvider {
     return _hotPosts.take(15).toList();
   }
 
-  Future<List<RedditPost>> getHotPosts(String subreddit,
-      [bool forceRefresh = false]) async {
+  Future<List<RedditPost>> getHotPosts(String subreddit, [bool forceRefresh = false]) async {
     if (!forceRefresh && _postMap[subreddit] is List<RedditPost>) {
       return _postMap[subreddit] as List<RedditPost>;
     }
@@ -61,16 +61,11 @@ class RedditDataProvider {
       'authorization': 'Bearer $_token',
       'user-agent': Constants.userAgent,
     };
-    final response = await http.get(
-        Uri.parse("$_endpoint/r/$subreddit/hot?limit=15"),
-        headers: headers);
+    final response = await http.get(Uri.parse("$_endpoint/r/$subreddit/hot?limit=15"), headers: headers);
 
     if (response.statusCode == 200) {
       List<dynamic> postsInfo = jsonDecode(response.body)["data"]["children"];
-      return postsInfo
-          .map((e) => e["data"])
-          .map((d) => RedditPost(d))
-          .toList();
+      return postsInfo.map((e) => e["data"]).map((d) => RedditPost(d)).toList();
     }
     return List.empty();
   }

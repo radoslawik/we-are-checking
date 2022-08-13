@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hard_tyre/models/data/ergast/standings.dart';
@@ -14,6 +16,26 @@ class DriverWidget extends MediaItemWidget {
 }
 
 class _DriverWidgetState extends State<DriverWidget> {
+  File? _driverImg;
+  File? _logoImg;
+
+  void initialize() async {
+    final dimg = await ImageSourceProvider.getDriverImageSource(widget.standing.driver.driverId);
+    final limg = await ImageSourceProvider.getLogoImageSource(widget.standing.constructors.first.constructorId);
+    if (mounted) {
+      setState(() {
+        _driverImg = dimg;
+        _logoImg = limg;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initialize();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -22,23 +44,19 @@ class _DriverWidgetState extends State<DriverWidget> {
         elevation: 3.0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
         child: ClipRRect(
-            borderRadius: BorderRadius.circular(30.0),    
+            borderRadius: BorderRadius.circular(30.0),
             child: Container(
                 width: 340,
                 decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.centerRight,
-                        colors: [
-                          Colors.white,
-                        Colors.black,
-                        ColorProvider.getColor(widget.standing.constructors.first.constructorId),
-                      ],
-                      stops: const [
-                      0.4,
-                      0.4,
-                      0.8,
-                    ])),
+                    gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.centerRight, colors: [
+                  Colors.white,
+                  Colors.black,
+                  ColorProvider.getColor(widget.standing.constructors.first.constructorId),
+                ], stops: const [
+                  0.4,
+                  0.4,
+                  0.8,
+                ])),
                 child: Stack(
                   children: [
                     ClipPath(
@@ -51,11 +69,12 @@ class _DriverWidgetState extends State<DriverWidget> {
                     Positioned(
                         bottom: 0.0,
                         right: -15.0,
-                        child: Image.network(
-                          ImageSourceProvider.getDriverImageSource(
-                              widget.standing.driver.driverId),
-                          scale: 1.5,
-                        )),
+                        child: _driverImg != null
+                            ? Image.file(
+                                _driverImg!,
+                                scale: 1.5,
+                              )
+                            : Container()),
                     Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: Column(
@@ -73,8 +92,7 @@ class _DriverWidgetState extends State<DriverWidget> {
                               Container(
                                 height: 30,
                                 width: 8,
-                                color: ColorProvider.getColor(widget
-                                    .standing.constructors.last.constructorId),
+                                color: ColorProvider.getColor(widget.standing.constructors.last.constructorId),
                               ),
                               const SizedBox(
                                 width: 10,
@@ -83,16 +101,12 @@ class _DriverWidgetState extends State<DriverWidget> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    widget.standing.driver.givenName
-                                        .toUpperCase(),
-                                    style:
-                                        Theme.of(context).textTheme.headline6,
+                                    widget.standing.driver.givenName.toUpperCase(),
+                                    style: Theme.of(context).textTheme.headline6,
                                   ),
                                   Text(
-                                    widget.standing.driver.familyName
-                                        .toUpperCase(),
-                                    style:
-                                        Theme.of(context).textTheme.headline5,
+                                    widget.standing.driver.familyName.toUpperCase(),
+                                    style: Theme.of(context).textTheme.headline5,
                                   ),
                                 ],
                               ),
@@ -112,19 +126,14 @@ class _DriverWidgetState extends State<DriverWidget> {
                               const SizedBox(
                                 width: 10.0,
                               ),
-                              Image.network(
-                                ImageSourceProvider.getLogoImageSource(widget
-                                    .standing.constructors.first.constructorId),
-                                scale: 2.2,
-                              ),
+                              _logoImg != null ? Image.file(_logoImg!, scale: 2.2) : Container(),
                               const SizedBox(
                                 width: 10.0,
                               ),
                               Text(
                                 widget.standing.driver.permanentNumber,
                                 style: GoogleFonts.poppins(
-                                  color: ColorProvider.getColor(widget.standing
-                                      .constructors.first.constructorId),
+                                  color: ColorProvider.getColor(widget.standing.constructors.first.constructorId),
                                   fontSize: 36,
                                   fontWeight: FontWeight.bold,
                                 ),

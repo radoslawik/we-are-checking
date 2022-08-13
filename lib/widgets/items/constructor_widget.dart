@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hard_tyre/models/data/ergast/standings.dart';
 import 'package:hard_tyre/services/color_provider.dart';
@@ -12,6 +14,26 @@ class ConstructorWidget extends MediaItemWidget {
 }
 
 class _ConstructorWidgetState extends State<ConstructorWidget> {
+  File? _conImg;
+  File? _logoImg;
+
+  void initialize() async {
+    final cimg = await ImageSourceProvider.getCarImageSource(widget.standing.constructor.constructorId);
+    final limg = await ImageSourceProvider.getLogoImageSource(widget.standing.constructor.constructorId);
+    if (mounted) {
+      setState(() {
+        _conImg = cimg;
+        _logoImg = limg;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initialize();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -29,11 +51,10 @@ class _ConstructorWidgetState extends State<ConstructorWidget> {
                 ClipPath(
                   clipper: WidgetClipper(),
                   child: Container(
-                      height: 90,
-                      width: 420,
-                      color: ColorProvider.getColor(
-                          widget.standing.constructor.constructorId),
-                    ),
+                    height: 90,
+                    width: 420,
+                    color: ColorProvider.getColor(widget.standing.constructor.constructorId),
+                  ),
                 ),
                 ClipPath(
                   clipper: WidgetClipper(),
@@ -41,34 +62,22 @@ class _ConstructorWidgetState extends State<ConstructorWidget> {
                       height: 90,
                       width: 420,
                       decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.bottomLeft,
-                              end: Alignment.centerRight,
-                              colors: [
-                            Colors.black38,
-                            Colors.transparent,
-                          ],
-                              stops: [
-                            0.0,
-                            0.7,
-                          ])),
+                          gradient: LinearGradient(begin: Alignment.bottomLeft, end: Alignment.centerRight, colors: [
+                        Colors.black38,
+                        Colors.transparent,
+                      ], stops: [
+                        0.0,
+                        0.7,
+                      ])),
                       //color: ColorProvider.getColor(widget.constructor.constructorId),
-                      child: Image.network(
-                          ImageSourceProvider.getCarImageSource(
-                              widget.standing.constructor.constructorId),
-                          scale: 1.9,
-                          alignment: Alignment.topRight)),
+                      child: _conImg != null ? Image.file(_conImg!, scale: 1.9, alignment: Alignment.topRight) : Container()),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 20, top: 20),
-                  child: Image.network(
-                      ImageSourceProvider.getLogoImageSource(
-                          widget.standing.constructor.constructorId),
-                      scale: 1.5),
+                  child: _logoImg != null ? Image.file(_logoImg!, scale: 1.5) : Container(),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(
-                      left: 20, right: 10, top: 80, bottom: 0),
+                  padding: const EdgeInsets.only(left: 20, right: 10, top: 80, bottom: 0),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: Row(
@@ -87,8 +96,7 @@ class _ConstructorWidgetState extends State<ConstructorWidget> {
                             Container(
                               height: 30,
                               width: 8,
-                              color: ColorProvider.getColor(
-                                  widget.standing.constructor.constructorId),
+                              color: ColorProvider.getColor(widget.standing.constructor.constructorId),
                             ),
                             const SizedBox(
                               width: 10,
@@ -102,8 +110,7 @@ class _ConstructorWidgetState extends State<ConstructorWidget> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('POINTS',
-                                style: Theme.of(context).textTheme.headline6),
+                            Text('POINTS', style: Theme.of(context).textTheme.headline6),
                             const SizedBox(width: 5),
                             Text(
                               widget.standing.points,

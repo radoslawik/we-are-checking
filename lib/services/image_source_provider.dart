@@ -1,7 +1,14 @@
+
+import 'dart:io';
+
+import 'package:hard_tyre/services/cache_provider.dart';
+
 class ImageSourceProvider {
-    static const String _baseTeamImageUrl = 'https://www.formula1.com/content/dam/fom-website/teams/2022/';
-    static const String _baseDriverImageUrl = 'https://www.formula1.com/content/dam/fom-website/drivers/';
-    static final Map _constructorNamesMap = {
+  static final _cacheProvider = CacheProvider();
+
+  static const String _baseTeamImageUrl = 'https://www.formula1.com/content/dam/fom-website/teams/2022/';
+  static const String _baseDriverImageUrl = 'https://www.formula1.com/content/dam/fom-website/drivers/';
+  static final Map _constructorNamesMap = {
     'red_bull': 'red-bull-racing',
     'ferrari': 'ferrari',
     'mercedes': 'mercedes',
@@ -36,19 +43,25 @@ class ImageSourceProvider {
     'latifi': 'N/NICLAF01_Nicholas_Latifi/niclaf01',
     'hulkenberg': 'N/NICHUL01_Nico_Hulkenberg/nichul01',
   };
+  static const String _ext = "png";
 
-  static String getCarImageSource(String key){
+  static Future<File?> getCarImageSource(String key) async {
     var val = _constructorNamesMap[key];
-    return '$_baseTeamImageUrl$val.png';
+    return await _getImageSource('$_baseTeamImageUrl$val.$_ext');
   }
 
-  static String getLogoImageSource(String key){
+  static Future<File?> getLogoImageSource(String key) async {
     var val = _constructorNamesMap[key];
-    return '$_baseTeamImageUrl$val-logo.png';
+    return await _getImageSource('$_baseTeamImageUrl$val-logo.$_ext');
   }
 
-  static String getDriverImageSource(String key){
+  static Future<File?> getDriverImageSource(String key) async {
     var driverString = _driverNamesMap[key];
-    return '$_baseDriverImageUrl$driverString.png.transform/2col/image.png';
+    return await _getImageSource('$_baseDriverImageUrl$driverString.png.transform/2col/image.$_ext');
+  }
+
+  static Future<File?> _getImageSource(String url) async {
+    return await _cacheProvider.tryGetFile(url, refreshDuration: const Duration(days: 1), ext: _ext);
+
   }
 }

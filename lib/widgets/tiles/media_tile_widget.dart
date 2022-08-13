@@ -23,7 +23,13 @@ class _MediaTileWidgetState extends State<MediaTileWidget>
   bool _isLoading = true;
 
   void initialize() async {
-    final medias = await widget.tile.getMedias();
+    var medias = [];
+    try {
+      medias = await widget.tile.getMedias();
+    } catch(e) {
+      // TODO
+      return;
+    }
     if (mounted) {
       setState(() {
         _feed = medias is List<NewsItem>

@@ -165,7 +165,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _reddit = RedditDataProvider();
     _livetiming = LivetimingDataProvider();
     _mainMedia = [
-      /*
       MediaTile('Driver standings', FontAwesomeIcons.trophy,
           _ergast.getDriverStandings, null),
       MediaTile('Constructor standings', FontAwesomeIcons.car,
@@ -174,7 +173,6 @@ class _MyHomePageState extends State<MyHomePage> {
           _reddit.getAllHotPosts, _showMoreReddit),
       MediaTile('Recent tweets', FontAwesomeIcons.twitter,
           _twitter.getTweetTimeline, _showMoreTwitter),
-          */
       MediaTile(
           'Data playground',
           FontAwesomeIcons.codeCompare,

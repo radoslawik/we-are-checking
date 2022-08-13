@@ -1,15 +1,18 @@
 import 'dart:convert';
-import 'dart:io';
-
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hard_tyre/helpers/livetiming_conversion.dart';
 import 'package:hard_tyre/models/data/livetiming/lap_time.dart';
 import 'package:hard_tyre/models/data/livetiming/position.dart';
 import 'package:hard_tyre/models/data/livetiming/telemetry.dart';
 import 'package:hard_tyre/models/media/playground_item.dart';
+import 'package:hard_tyre/services/cache_provider.dart';
 
 class LivetimingDataProvider {
-  final _cacheManager = DefaultCacheManager();
+  // Singleton
+  static final LivetimingDataProvider _singleton = LivetimingDataProvider._internal();
+  factory LivetimingDataProvider() => _singleton;
+  LivetimingDataProvider._internal();
+
+  final _cacheProvider = CacheProvider();
   // TODO make it generic
   static const _baseUrl = 'http://livetiming.formula1.com/static';
   final _raceUrl = '$_baseUrl/2022/2022-07-31_Hungarian_Grand_Prix/2022-07-31_Race';
@@ -67,17 +70,6 @@ class LivetimingDataProvider {
     return LapPositionComparison(comps);
   }
 
-  Future<File> _getLivetimingFile(String url) async {
-    var fileInfo = await _cacheManager.getFileFromCache(url);
-    if (fileInfo != null) {
-      return fileInfo.file;
-    } else {
-      var file = await _cacheManager.getSingleFile(url);
-      await _cacheManager.putFile(url, await file.readAsBytes(), key: url);
-      return file;
-    }
-  }
-
   List<TelemetryEntry> _parseCarDataRow(String row) {
     final rawInput = row.split('"').elementAt(1);
     final jsonString = LivetimingConversion.decodeToString(rawInput);
@@ -115,31 +107,31 @@ class LivetimingDataProvider {
   }
 
   Future<List<TelemetryEntry>> _retrieveTelemetries() async {
-    final file = await _getLivetimingFile('$_qualiUrl/$_carData');
-    final content = await file.readAsLines();
+    final file = await _cacheProvider.tryGetFile('$_qualiUrl/$_carData');
+    final content = await file?.readAsLines();
     _telemetries = [];
-    for (var row in content) {
+    for (var row in content ?? []) {
       _telemetries!.addAll(_parseCarDataRow(row));
     }
     return _telemetries!;
   }
 
   Future<List<PositionEntry>> _retrievePositions() async {
-    final file = await _getLivetimingFile('$_qualiUrl/$_posData');
-    final content = await file.readAsLines();
+    final file = await _cacheProvider.tryGetFile('$_qualiUrl/$_posData');
+    final content = await file?.readAsLines();
     _positions = [];
-    for (var row in content) {
+    for (var row in content ?? []) {
       _positions!.addAll(_parsePositionDataRow(row));
     }
     return _positions!;
   }
 
   Future<Map<String, LapTime>> _retrievePersonalBests() async {
-    final file = await _getLivetimingFile('$_qualiUrl/$_lapTimes');
-    final content = await file.readAsLines();
+    final file = await _cacheProvider.tryGetFile('$_qualiUrl/$_lapTimes');
+    final content = await file?.readAsLines();
     final startTime = await _getSessionStartTime();
     _bestLaps = {};
-    if (startTime != null) {
+    if (startTime != null && content != null) {
       for (var row in content.skip(1)) {
         final ts = LivetimingConversion.parseDuration(row.substring(0, 11));
         if (ts != null) {
@@ -160,10 +152,13 @@ class LivetimingDataProvider {
   }
 
   Future<DateTime?> _getSessionStartTime() async {
-    final heartbeat = await _getLivetimingFile('$_qualiUrl/$_heartbeatData');
-    final sessionTiming = await heartbeat.readAsLines().then((value) => value.first);
-    final duration = LivetimingConversion.parseDuration(sessionTiming.substring(0, 11));
-    final utc = DateTime.tryParse(jsonDecode(sessionTiming.substring(12))["Utc"]);
-    return duration != null && utc != null ? utc.subtract(duration) : null;
+    final heartbeat = await _cacheProvider.tryGetFile('$_qualiUrl/$_heartbeatData');
+    if (heartbeat != null) {
+      final sessionTiming = await heartbeat.readAsLines().then((value) => value.first);
+      final duration = LivetimingConversion.parseDuration(sessionTiming.substring(0, 11));
+      final utc = DateTime.tryParse(jsonDecode(sessionTiming.substring(12))["Utc"]);
+      return duration != null && utc != null ? utc.subtract(duration) : null;
+    }
+    return null;
   }
 }
