@@ -10,14 +10,14 @@ class LapTime {
 
 class LapPosition {
   final String driverNumber;
-  final DateTime time;
-  final CarPosition position;
+  final LapTime info;
+  final Map<Duration, CarPosition?> coords;
 
-  LapPosition(this.driverNumber, this.time, this.position);
+  LapPosition(this.driverNumber, this.info, this.coords);
 }
 
 class LapPositionComparison extends DetailedPlaygroundItem {
-  final Map<String, List<LapPosition>> items;
+  final List<LapPosition> lapPositions;
 
-  LapPositionComparison(this.items);
+  LapPositionComparison(this.lapPositions);
 }
