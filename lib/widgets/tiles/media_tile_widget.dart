@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hard_tyre/models/data/ergast/standings.dart';
-import 'package:hard_tyre/models/data/livetiming/lap_time.dart';
-import 'package:hard_tyre/models/data/livetiming/position.dart';
 import 'package:hard_tyre/models/media/media_tile.dart';
 import 'package:hard_tyre/models/media/news_item.dart';
+import 'package:hard_tyre/models/media/playground_item.dart';
 import 'package:hard_tyre/widgets/items/constructor_widget.dart';
 import 'package:hard_tyre/widgets/items/driver_widget.dart';
-import 'package:hard_tyre/widgets/items/lap_comparison_widget.dart';
+import 'package:hard_tyre/widgets/items/playground_item_widget.dart';
 import 'package:hard_tyre/widgets/items/media_item_widget.dart';
 import 'package:hard_tyre/widgets/items/news_item_widget.dart';
 
@@ -33,8 +32,8 @@ class _MediaTileWidgetState extends State<MediaTileWidget>
                 ? medias.map((e) => DriverWidget(standing: e)).toList()
                 : medias is List<ConstructorStanding>
                     ? medias.map((e) => ConstructorWidget(standing: e)).toList()
-                    : medias is List<LapPositionComparison> ?
-                    medias.map((e) => LapComparisonWidget(comparison: e)).toList() : [];
+                    : medias is List<PlaygroundItem> ?
+                    medias.map((e) => PlaygroundItemWidget(item: e)).toList() : [];
         _isLoading = false;
       });
     }

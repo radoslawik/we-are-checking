@@ -1,5 +1,5 @@
 import 'package:hard_tyre/models/data/livetiming/position.dart';
-import 'package:hard_tyre/models/media/media_item.dart';
+import 'package:hard_tyre/models/media/playground_item.dart';
 
 class LapTime {
   final DateTime when;
@@ -16,7 +16,7 @@ class LapPosition {
   LapPosition(this.driverNumber, this.time, this.position);
 }
 
-class LapPositionComparison extends MediaItem {
+class LapPositionComparison extends DetailedPlaygroundItem {
   final Map<String, List<LapPosition>> items;
 
   LapPositionComparison(this.items);

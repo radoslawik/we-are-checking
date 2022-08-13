@@ -6,9 +6,11 @@ import 'package:hard_tyre/helpers/livetiming_conversion.dart';
 import 'package:hard_tyre/models/data/livetiming/lap_time.dart';
 import 'package:hard_tyre/models/data/livetiming/position.dart';
 import 'package:hard_tyre/models/data/livetiming/telemetry.dart';
+import 'package:hard_tyre/models/media/playground_item.dart';
 
 class LivetimingDataProvider {
   final _cacheManager = DefaultCacheManager();
+  // TODO make it generic
   static const _baseUrl = 'http://livetiming.formula1.com/static';
   final _raceUrl =
       '$_baseUrl/2022/2022-07-31_Hungarian_Grand_Prix/2022-07-31_Race';
@@ -22,6 +24,10 @@ class LivetimingDataProvider {
   List<TelemetryEntry>? _telemetries;
   List<PositionEntry>? _positions;
   Map<String, LapTime>? _bestLaps;
+
+  Future<List<PlaygroundItem>> getDataPlayground() async {
+    return [ PlaygroundItem("Lap comparison", () async => await getLapPositionComparisons(["1", "44"]))];
+  }
 
   Future<List<TelemetryEntry>> getTelemetries() async =>
       _telemetries ?? await _retrieveTelemetries();
