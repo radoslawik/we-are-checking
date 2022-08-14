@@ -7,7 +7,6 @@ import 'package:hard_tyre/models/data/livetiming/lap_time.dart';
 import 'package:hard_tyre/models/data/livetiming/position.dart';
 import 'package:hard_tyre/models/data/livetiming/telemetry.dart';
 import 'package:hard_tyre/models/media/playground_item.dart';
-import 'package:hard_tyre/services/api/ergast_data_provider.dart';
 import 'package:hard_tyre/services/cache_provider.dart';
 
 class LivetimingDataProvider {
@@ -17,7 +16,6 @@ class LivetimingDataProvider {
   LivetimingDataProvider._internal();
 
   final _cacheProvider = CacheProvider();
-  final _ergast = ErgastDataProvider();
   // TODO make it generic
   static const _baseUrl = 'http://livetiming.formula1.com/static';
   //final _raceUrl = '$_baseUrl/2022/2022-07-31_Hungarian_Grand_Prix/2022-07-31_Race';

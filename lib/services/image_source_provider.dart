@@ -8,6 +8,7 @@ class ImageSourceProvider {
 
   static const String _baseTeamImageUrl = 'https://www.formula1.com/content/dam/fom-website/teams/2022/';
   static const String _baseDriverImageUrl = 'https://www.formula1.com/content/dam/fom-website/drivers/';
+  static const String _baseCircuitImageUrl = 'https://www.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/';
   static final Map _constructorNamesMap = {
     'red_bull': 'red-bull-racing',
     'ferrari': 'ferrari',
@@ -60,8 +61,13 @@ class ImageSourceProvider {
     return await _getImageSource('$_baseDriverImageUrl$driverString.png.transform/2col/image.$_ext');
   }
 
+  static Future<File?> getCircuitImageSource(String key) async {
+    final url = '$_baseCircuitImageUrl${key.substring(0,1).toUpperCase()}${key.substring(1)}%20carbon.png.transform/3col/image.$_ext';
+    //return await _cacheProvider.tryGetFile(url, refreshDuration: const Duration(days: 1), ext: _ext);
+    return null; // TODO add the urls manually cuz above doesnt work
+  }
+
   static Future<File?> _getImageSource(String url) async {
     return await _cacheProvider.tryGetFile(url, refreshDuration: const Duration(days: 1), ext: _ext);
-
   }
 }

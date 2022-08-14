@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:hard_tyre/models/data/ergast/drivers.dart';
 import 'package:hard_tyre/models/data/livetiming/lap_time.dart';
 import 'package:hard_tyre/services/api/ergast_data_provider.dart';
 import 'package:hard_tyre/services/api/livetiming_data_provider.dart';
+import 'package:hard_tyre/services/image_source_provider.dart';
 import 'package:hard_tyre/widgets/title_bar_widget.dart';
 
 import '../charts/line_chart_widget.dart';
@@ -23,7 +25,9 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
   final _livetiming = LivetimingDataProvider();
   List<Race>? _races;
   List<Driver>? _drivers;
-  String? _selectedRace;
+  String? _selectedRaceName;
+  Race? _selectedRace;
+  File? _circuitImage;
   String? _selectedDriver1;
   String? _selectedDriver2;
   List<LapPosition>? _lapPositions;
@@ -79,9 +83,13 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
     return '$minutes:${seconds < 10 ? '0' : ''}$seconds.$ms${ms == 0 ? '00' : ''}';
   }
 
-  void _selectedRaceChanged(String? race) {
+  void _selectedRaceChanged(String? race) async {
+    final selectedRace = _races!.firstWhere((element) => element.raceName == race);
+    final imageFile = await ImageSourceProvider.getCircuitImageSource(selectedRace.circuit.circuitId);
     setState(() {
-      _selectedRace = race;
+      _selectedRaceName = race;
+      _selectedRace = selectedRace;
+      _circuitImage = imageFile;
     });
     _tryInitialize();
   }
@@ -102,9 +110,8 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
 
   void _tryInitialize() async {
     if (_selectedRace != null && _selectedDriver1 != null && _selectedDriver2 != null) {
-      final race = _races!.firstWhere((element) => element.raceName == _selectedRace);
-      final d1 = await _livetiming.getPositionsDuringPersonalBest(_selectedDriver1!, race);
-      final d2 = await _livetiming.getPositionsDuringPersonalBest(_selectedDriver2!, race);
+      final d1 = await _livetiming.getPositionsDuringPersonalBest(_selectedDriver1!, _selectedRace!);
+      final d2 = await _livetiming.getPositionsDuringPersonalBest(_selectedDriver2!, _selectedRace!);
       if (d1 != null && d2 != null) {
         _lapPositions = [d1, d2];
         final times = _lapPositions!.map((e) => e.info.time).toList();
@@ -152,6 +159,9 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
             child: Stack(children: [
               Column(
                 children: [
+                  Row(children: [
+                    _circuitImage != null ? Image.file(_circuitImage!) : Container()
+                  ],),
                   Row(
                     children: [
                       DropdownButton(
@@ -170,7 +180,7 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
                                     ),
                                   ))
                               .toList(),
-                          value: _selectedRace,
+                          value: _selectedRaceName,
                           onChanged: _selectedRaceChanged,
                           hint: const Text("Circuit")),
                       const SizedBox(width: 20),
