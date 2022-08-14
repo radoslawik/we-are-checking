@@ -131,7 +131,7 @@ class _DriverWidgetState extends State<DriverWidget> {
                                 width: 10.0,
                               ),
                               Text(
-                                widget.standing.driver.permanentNumber,
+                                widget.standing.driver.getDriverNumber(),
                                 style: GoogleFonts.poppins(
                                   color: ColorProvider.getColor(widget.standing.constructors.first.constructorId),
                                   fontSize: 36,

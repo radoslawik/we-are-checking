@@ -1,9 +1,9 @@
 import 'package:collection/collection.dart';
+import 'package:hard_tyre/models/data/ergast/circuits.dart';
 import 'package:hard_tyre/models/data/ergast/data.dart';
 import 'package:hard_tyre/models/data/ergast/drivers.dart';
 import 'package:hard_tyre/models/data/ergast/standings.dart';
 import 'package:hard_tyre/services/cache_provider.dart';
-import 'package:http/http.dart' as http;
 
 class ErgastDataProvider {
   // Singleton
@@ -18,6 +18,7 @@ class ErgastDataProvider {
   List<Driver>? _drivers;
   List<DriverStanding>? _driverStandings;
   List<ConstructorStanding>? _constructorStandings;
+  List<Race>? _races;
 
   Future<List<Driver>> getDrivers([int? season, bool forceRefresh = false]) async {
     if (_drivers == null || forceRefresh) {
@@ -43,8 +44,17 @@ class ErgastDataProvider {
     return _constructorStandings ?? List.empty();
   }
 
+  Future<List<Race>> getRaceSchedule([int? season, bool forceRefresh = false]) async {
+    if (_races == null || forceRefresh) {
+      final data = await _fetchData("${season ?? "current"}");
+      _races = data?.raceTable?.races;
+    }
+    return _races ?? List.empty();
+  }
+
   Future<MrData?> _fetchData(String complement) async {
     final file = await _cacheProvider.tryGetFile('$_baseUrl/$complement.$_extension', refreshDuration: const Duration(hours: 1), ext: _extension);
     return file != null ? dataFromJson(await file.readAsString()) : null;
   }
+  
 }

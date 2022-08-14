@@ -35,8 +35,10 @@ class Driver {
     DateTime dateOfBirth;
     String nationality;
 
+    String getDriverNumber() => permanentNumber == "33" ? "1" : permanentNumber; // MV fcked it up
+
     factory Driver.fromJson(Map<String, dynamic> json) => Driver(
-        driverId: json["driverId"],
+        driverId: json["driverId"], 
         permanentNumber: json["permanentNumber"],
         code: json["code"],
         url: json["url"],

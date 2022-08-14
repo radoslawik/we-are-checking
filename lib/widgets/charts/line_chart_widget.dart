@@ -16,8 +16,8 @@ class LineChartWidget extends StatefulWidget {
 
 class LineChartWidgetState extends State<LineChartWidget> {
   final List<Color> _colors = [Colors.red, Colors.blue, Colors.green, Colors.purple];
-  late List<CarPosition> _lastPositions;
-  late List<LineChartBarData> _chartLines;
+  List<CarPosition> _lastPositions = [];
+  List<LineChartBarData> _chartLines = [];
   double? _minX;
   double? _minY;
   double? _maxX;
@@ -104,9 +104,10 @@ class LineChartWidgetState extends State<LineChartWidget> {
       dotData: FlDotData(checkToShowDot: _shouldDisplayDot),
       color: color,
       barWidth: 1.5,
-      isStrokeJoinRound: true,
-      isStrokeCapRound: true,
       isCurved: true,
+      isStrokeCapRound: true,
+      isStrokeJoinRound: true,
+      curveSmoothness: 0.25
     );
   }
 

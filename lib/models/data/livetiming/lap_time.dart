@@ -1,3 +1,4 @@
+import 'package:hard_tyre/models/data/ergast/circuits.dart';
 import 'package:hard_tyre/models/data/livetiming/position.dart';
 import 'package:hard_tyre/models/media/playground_item.dart';
 
@@ -17,7 +18,15 @@ class LapPosition {
 }
 
 class LapPositionComparison extends DetailedPlaygroundItem {
-  final List<LapPosition> lapPositions;
+  final List<LapPosition>? lapPositions;
+  final Race? race;
 
-  LapPositionComparison(this.lapPositions);
+  LapPositionComparison({this.lapPositions, this.race});
+}
+
+class BestLaps {
+  final Race race;
+  final Map<String, LapTime> laps;
+
+  BestLaps(this.race, this.laps);
 }

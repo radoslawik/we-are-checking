@@ -1,7 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:hard_tyre/models/data/ergast/circuits.dart';
+import 'package:hard_tyre/models/data/ergast/drivers.dart';
 import 'package:hard_tyre/models/data/livetiming/lap_time.dart';
+import 'package:hard_tyre/services/api/ergast_data_provider.dart';
+import 'package:hard_tyre/services/api/livetiming_data_provider.dart';
 import 'package:hard_tyre/widgets/title_bar_widget.dart';
 
 import '../charts/line_chart_widget.dart';
@@ -15,14 +19,34 @@ class DetailedLapComparisonWidget extends StatefulWidget {
 }
 
 class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidget> {
-  late LineChartWidget _graph;
+  final _ergast = ErgastDataProvider();
+  final _livetiming = LivetimingDataProvider();
+  List<Race>? _races;
+  List<Driver>? _drivers;
+  String? _selectedRace;
+  String? _selectedDriver1;
+  String? _selectedDriver2;
+  List<LapPosition>? _lapPositions;
+
+  LineChartWidget? _graph;
   final _min = 0.0;
-  late double _max;
-  late int _divisions;
-  late double _change;
-  late String _currentDur;
+  double _max = 99.0;
+  int _divisions = 990;
+  double _change = 0.1;
+  String _currentDur = "Unknown";
   var _current = 0.0;
   var _zoom = false;
+  var _dataReady = false;
+
+  void init() async {
+    final races = await _ergast.getRaceSchedule();
+    final finished = races.where((element) => element.date.compareTo(DateTime.now()) < 0).toList();
+    final drivers = await _ergast.getDrivers();
+    setState(() {
+      _races = finished;
+      _drivers = drivers;
+    });
+  }
 
   void _updateTime(double value) {
     final dur = Duration(milliseconds: (value * 1000).round());
@@ -41,9 +65,11 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
   }
 
   void updateGraph() {
-    setState(() {
-      _graph = LineChartWidget(data: widget.comparison.lapPositions, current: Duration(milliseconds: (_current * 1000).ceil()), zoom: _zoom);
-    });
+    if (_lapPositions != null && _lapPositions!.length >= 2) {
+      setState(() {
+        _graph = LineChartWidget(data: _lapPositions!, current: Duration(milliseconds: (_current * 1000).round()), zoom: _zoom);
+      });
+    }
   }
 
   String formatDuration(Duration dur) {
@@ -53,16 +79,65 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
     return '$minutes:${seconds < 10 ? '0' : ''}$seconds.$ms${ms == 0 ? '00' : ''}';
   }
 
+  void _selectedRaceChanged(String? race) {
+    setState(() {
+      _selectedRace = race;
+    });
+    _tryInitialize();
+  }
+
+  void _selectedDriver1Changed(String? d1) {
+    setState(() {
+      _selectedDriver1 = d1;    
+    });
+    _tryInitialize();
+  }
+
+  void _selectedDriver2Changed(String? d2) {
+    setState(() {
+      _selectedDriver2 = d2;
+    });
+    _tryInitialize();
+  }
+
+  void _tryInitialize() async {
+    if (_selectedRace != null && _selectedDriver1 != null && _selectedDriver2 != null) {
+      final race = _races!.firstWhere((element) => element.raceName == _selectedRace);
+      final d1 = await _livetiming.getPositionsDuringPersonalBest(_selectedDriver1!, race);
+      final d2 = await _livetiming.getPositionsDuringPersonalBest(_selectedDriver2!, race);
+      if (d1 != null && d2 != null) {
+        _lapPositions = [d1, d2];
+        final times = _lapPositions!.map((e) => e.info.time).toList();
+        times.sort((a, b) => b.compareTo(a));
+        setState(() {
+          _zoom = false;
+          _current = 0.0;
+          _max = times.first.inSeconds + 1;
+          _divisions = (_max * 10).ceil();
+          _change = _max / _divisions;
+          _currentDur = formatDuration(Duration(milliseconds: (_current * 1000).round()));
+          _graph = LineChartWidget(data: _lapPositions!, current: Duration(milliseconds: (_current * 1000).round()), zoom: _zoom);
+        });
+        _dataReady = true;
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    final times = widget.comparison.lapPositions.map((e) => e.info.time).toList();
-    times.sort((a, b) => b.compareTo(a));
-    _max = times.first.inSeconds + 1;
-    _divisions = (_max * 10).ceil();
-    _change = _max / _divisions;
-    _currentDur = formatDuration(Duration(milliseconds: (_current * 1000).round()));
-    _graph = LineChartWidget(data: widget.comparison.lapPositions, current: Duration(seconds: _current.ceil()), zoom: _zoom);
+    /*
+    if (widget.comparison.lapPositions != null && widget.comparison.lapPositions!.isNotEmpty) {
+      final times = widget.comparison.lapPositions!.map((e) => e.info.time).toList();
+      times.sort((a, b) => b.compareTo(a));
+      _max = times.first.inSeconds + 1;
+      _divisions = (_max * 10).ceil();
+      _change = _max / _divisions;
+      _currentDur = formatDuration(Duration(milliseconds: (_current * 1000).round()));
+      _graph = LineChartWidget(data: widget.comparison.lapPositions!, current: Duration(seconds: _current.ceil()), zoom: _zoom);
+    }
+    */
+    init();
   }
 
   @override
@@ -73,39 +148,109 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
           title: const TitleBarWidget(),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Stack(children: [
-            Column(
-              children: [
-                Row(
-                  children: [
-                    MaterialButton(onPressed: _updateZoom, child: const Text('Toggle zoom')),
-                    MaterialButton(onPressed: () => _updateTime(max(_current - _change, _min)), child: const Text('Previous')),
-                    Slider(
-                      value: _current,
-                      min: _min,
-                      max: _max,
-                      divisions: _divisions,
-                      onChanged: _updateTime,
-                    ),
-                    MaterialButton(onPressed: () => _updateTime(min(_current + _change, _max)), child: const Text('Next')),
-                    Text(_currentDur),
-                  ],
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 50.0),
-                  child: AspectRatio(
-                    aspectRatio: 1 / 1,
-                    child: _graph,
+            padding: const EdgeInsets.all(8.0),
+            child: Stack(children: [
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      DropdownButton(
+                          items: _races
+                              ?.map((e) => DropdownMenuItem(
+                                    value: e.raceName,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(e.circuit.circuitName),
+                                        Text(
+                                          e.raceName,
+                                          style: Theme.of(context).textTheme.caption,
+                                        ),
+                                      ],
+                                    ),
+                                  ))
+                              .toList(),
+                          value: _selectedRace,
+                          onChanged: _selectedRaceChanged,
+                          hint: const Text("Circuit")),
+                      const SizedBox(width: 20),
+                      DropdownButton(
+                          items: _drivers
+                              ?.where((element) => element.getDriverNumber() != _selectedDriver2)
+                              .toList()
+                              .map((e) => DropdownMenuItem(
+                                    value: e.getDriverNumber(),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(e.familyName),
+                                        Text(
+                                          e.givenName,
+                                          style: Theme.of(context).textTheme.caption,
+                                        ),
+                                      ],
+                                    ),
+                                  ))
+                              .toList(),
+                          value: _selectedDriver1,
+                          onChanged: _selectedDriver1Changed,
+                          hint: const Text("Driver 1")),
+                      const SizedBox(width: 20),
+                      DropdownButton(
+                          items: _drivers
+                              ?.where((element) => element.getDriverNumber() != _selectedDriver1)
+                              .toList()
+                              .map((e) => DropdownMenuItem(
+                                    value: e.getDriverNumber(),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(e.familyName),
+                                        Text(
+                                          e.givenName,
+                                          style: Theme.of(context).textTheme.caption,
+                                        ),
+                                      ],
+                                    ),
+                                  ))
+                              .toList(),
+                          value: _selectedDriver2,
+                          onChanged: _selectedDriver2Changed,
+                          hint: const Text("Driver 2")),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ]),
-        ));
+                  _dataReady
+                      ? Row(
+                          children: [
+                            MaterialButton(onPressed: _updateZoom, child: const Text('Toggle zoom')),
+                            MaterialButton(onPressed: () => _updateTime(max(_current - _change, _min)), child: const Text('Previous')),
+                            Slider(
+                              value: _current,
+                              min: _min,
+                              max: _max,
+                              divisions: _divisions,
+                              onChanged: _updateTime,
+                            ),
+                            MaterialButton(onPressed: () => _updateTime(min(_current + _change, _max)), child: const Text('Next')),
+                            Text(_currentDur),
+                          ],
+                        )
+                      : Container(),
+                ],
+              ),
+              Row(
+                children: [
+                  _dataReady
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 100.0),
+                          child: AspectRatio(
+                            aspectRatio: 1 / 1,
+                            child: _graph,
+                          ),
+                        )
+                      : Container(),
+                ],
+              ),
+            ])));
   }
 }
