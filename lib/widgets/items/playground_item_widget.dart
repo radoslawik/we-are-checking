@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:hard_tyre/models/data/livetiming/lap_time.dart';
 import 'package:hard_tyre/models/media/playground_item.dart';
@@ -15,12 +16,67 @@ class PlaygroundItemWidget extends MediaItemWidget {
 class _PlaygroundItemWidgetState extends State<PlaygroundItemWidget> {
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
-      onPressed: _showDetails,
-      padding: EdgeInsets.zero,
-      color: Colors.white,
-      child: Text(widget.item.title),
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: MaterialButton(
+            onPressed: _showDetails,
+            padding: EdgeInsets.zero,
+            color: Colors.white,
+            child: Row(children: [
+              SizedBox(
+                width: 150,
+                child: LineChart(
+                  LineChartData(
+                      minX: -1,
+                      maxX: 1,
+                      minY: -1,
+                      maxY: 0.8,
+                      borderData: FlBorderData(show: false),
+                      lineTouchData: LineTouchData(enabled: false),
+                      clipData: FlClipData.all(),
+                      gridData: FlGridData(show: false),
+                      lineBarsData: [
+                        LineChartBarData(
+                          spots: const [FlSpot(-0.7,-0.6), FlSpot(-0.4, 0.2), FlSpot(0.3, 0.4), FlSpot(0.7, -0.2)],
+                          show: true,
+                          color: Colors.blue,
+                          barWidth: 1.5,
+                          isCurved: true,
+                          isStrokeCapRound: true,
+                          isStrokeJoinRound: true,
+                          curveSmoothness: 0.25
+                        ),
+                        LineChartBarData(
+                          spots: const [FlSpot(-0.6,-0.7), FlSpot(-0.5, 0.1), FlSpot(0.1, 0.5), FlSpot(0.6, -0.1)],
+                          show: true,
+                          color: Colors.red,
+                          barWidth: 1.5,
+                          isCurved: true,
+                          isStrokeCapRound: true,
+                          isStrokeJoinRound: true,
+                          curveSmoothness: 0.25
+                        ),
+                      ],
+                  titlesData: FlTitlesData(show: false)),
+                  swapAnimationCurve: Curves.easeInCirc,
+                  swapAnimationDuration: const Duration(milliseconds: 300),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 15.0),
+                child: Text(widget.item.title.replaceAll(RegExp(r' '), '\n'), style: Theme.of(context).textTheme.subtitle1),
+              )
+            ],)
+          ),
+        ),
+      ),
     );
+  
   }
 
   void _showDetails() => Navigator.push(

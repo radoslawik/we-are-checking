@@ -41,6 +41,7 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
   var _current = 0.0;
   var _zoom = false;
   var _dataReady = false;
+  var _isLoading = false;
 
   void init() async {
     final races = await _ergast.getRaceSchedule();
@@ -110,6 +111,7 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
 
   void _tryInitialize() async {
     if (_selectedRace != null && _selectedDriver1 != null && _selectedDriver2 != null) {
+      _isLoading = true;
       final d1 = await _livetiming.getPositionsDuringPersonalBest(_selectedDriver1!, _selectedRace!);
       final d2 = await _livetiming.getPositionsDuringPersonalBest(_selectedDriver2!, _selectedRace!);
       if (d1 != null && d2 != null) {
@@ -126,6 +128,7 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
           _graph = LineChartWidget(data: _lapPositions!, current: Duration(milliseconds: (_current * 1000).round()), zoom: _zoom);
         });
         _dataReady = true;
+        _isLoading = false;
       }
     }
   }
@@ -133,17 +136,6 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
   @override
   void initState() {
     super.initState();
-    /*
-    if (widget.comparison.lapPositions != null && widget.comparison.lapPositions!.isNotEmpty) {
-      final times = widget.comparison.lapPositions!.map((e) => e.info.time).toList();
-      times.sort((a, b) => b.compareTo(a));
-      _max = times.first.inSeconds + 1;
-      _divisions = (_max * 10).ceil();
-      _change = _max / _divisions;
-      _currentDur = formatDuration(Duration(milliseconds: (_current * 1000).round()));
-      _graph = LineChartWidget(data: widget.comparison.lapPositions!, current: Duration(seconds: _current.ceil()), zoom: _zoom);
-    }
-    */
     init();
   }
 
@@ -156,111 +148,114 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
         ),
         body: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Stack(children: [
-              Column(
-                children: [
-                  Row(children: [
-                    _circuitImage != null ? Image.file(_circuitImage!) : Container()
-                  ],),
-                  Row(
-                    children: [
-                      DropdownButton(
-                          items: _races
-                              ?.map((e) => DropdownMenuItem(
-                                    value: e.raceName,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(e.circuit.circuitName),
-                                        Text(
-                                          e.raceName,
-                                          style: Theme.of(context).textTheme.caption,
-                                        ),
-                                      ],
-                                    ),
-                                  ))
-                              .toList(),
-                          value: _selectedRaceName,
-                          onChanged: _selectedRaceChanged,
-                          hint: const Text("Circuit")),
-                      const SizedBox(width: 20),
-                      DropdownButton(
-                          items: _drivers
-                              ?.where((element) => element.getDriverNumber() != _selectedDriver2)
-                              .toList()
-                              .map((e) => DropdownMenuItem(
-                                    value: e.getDriverNumber(),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(e.familyName),
-                                        Text(
-                                          e.givenName,
-                                          style: Theme.of(context).textTheme.caption,
-                                        ),
-                                      ],
-                                    ),
-                                  ))
-                              .toList(),
-                          value: _selectedDriver1,
-                          onChanged: _selectedDriver1Changed,
-                          hint: const Text("Driver 1")),
-                      const SizedBox(width: 20),
-                      DropdownButton(
-                          items: _drivers
-                              ?.where((element) => element.getDriverNumber() != _selectedDriver1)
-                              .toList()
-                              .map((e) => DropdownMenuItem(
-                                    value: e.getDriverNumber(),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(e.familyName),
-                                        Text(
-                                          e.givenName,
-                                          style: Theme.of(context).textTheme.caption,
-                                        ),
-                                      ],
-                                    ),
-                                  ))
-                              .toList(),
-                          value: _selectedDriver2,
-                          onChanged: _selectedDriver2Changed,
-                          hint: const Text("Driver 2")),
-                    ],
-                  ),
-                  _dataReady
-                      ? Row(
-                          children: [
-                            MaterialButton(onPressed: _updateZoom, child: const Text('Toggle zoom')),
-                            MaterialButton(onPressed: () => _updateTime(max(_current - _change, _min)), child: const Text('Previous')),
-                            Slider(
-                              value: _current,
-                              min: _min,
-                              max: _max,
-                              divisions: _divisions,
-                              onChanged: _updateTime,
+            child: AbsorbPointer(
+              absorbing: _isLoading,
+              child: Stack(children: [
+                Column(
+                  children: [
+                    Row(children: [
+                      _circuitImage != null ? Image.file(_circuitImage!) : Container()
+                    ],),
+                    Row(
+                      children: [
+                        DropdownButton(
+                            items: _races
+                                ?.map((e) => DropdownMenuItem(
+                                      value: e.raceName,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(e.circuit.circuitName),
+                                          Text(
+                                            e.raceName,
+                                            style: Theme.of(context).textTheme.caption,
+                                          ),
+                                        ],
+                                      ),
+                                    ))
+                                .toList(),
+                            value: _selectedRaceName,
+                            onChanged: _selectedRaceChanged,
+                            hint: const Text("Circuit")),
+                        const SizedBox(width: 20),
+                        DropdownButton(
+                            items: _drivers
+                                ?.where((element) => element.getDriverNumber() != _selectedDriver2)
+                                .toList()
+                                .map((e) => DropdownMenuItem(
+                                      value: e.getDriverNumber(),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(e.familyName),
+                                          Text(
+                                            e.givenName,
+                                            style: Theme.of(context).textTheme.caption,
+                                          ),
+                                        ],
+                                      ),
+                                    ))
+                                .toList(),
+                            value: _selectedDriver1,
+                            onChanged: _selectedDriver1Changed,
+                            hint: const Text("Driver 1")),
+                        const SizedBox(width: 20),
+                        DropdownButton(
+                            items: _drivers
+                                ?.where((element) => element.getDriverNumber() != _selectedDriver1)
+                                .toList()
+                                .map((e) => DropdownMenuItem(
+                                      value: e.getDriverNumber(),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(e.familyName),
+                                          Text(
+                                            e.givenName,
+                                            style: Theme.of(context).textTheme.caption,
+                                          ),
+                                        ],
+                                      ),
+                                    ))
+                                .toList(),
+                            value: _selectedDriver2,
+                            onChanged: _selectedDriver2Changed,
+                            hint: const Text("Driver 2")),
+                      ],
+                    ),
+                    _dataReady
+                        ? Row(
+                            children: [
+                              MaterialButton(onPressed: _updateZoom, child: const Text('Toggle zoom')),
+                              MaterialButton(onPressed: () => _updateTime(max(_current - _change, _min)), child: const Text('Previous')),
+                              Slider(
+                                value: _current,
+                                min: _min,
+                                max: _max,
+                                divisions: _divisions,
+                                onChanged: _updateTime,
+                              ),
+                              MaterialButton(onPressed: () => _updateTime(min(_current + _change, _max)), child: const Text('Next')),
+                              Text(_currentDur),
+                            ],
+                          )
+                        : Container(),
+                  ],
+                ),
+                Row(
+                  children: [
+                    _dataReady
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 100.0),
+                            child: AspectRatio(
+                              aspectRatio: 1 / 1,
+                              child: _graph,
                             ),
-                            MaterialButton(onPressed: () => _updateTime(min(_current + _change, _max)), child: const Text('Next')),
-                            Text(_currentDur),
-                          ],
-                        )
-                      : Container(),
-                ],
-              ),
-              Row(
-                children: [
-                  _dataReady
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 100.0),
-                          child: AspectRatio(
-                            aspectRatio: 1 / 1,
-                            child: _graph,
-                          ),
-                        )
-                      : Container(),
-                ],
-              ),
-            ])));
+                          )
+                        : Container(),
+                  ],
+                ),
+              ]),
+            )));
   }
 }

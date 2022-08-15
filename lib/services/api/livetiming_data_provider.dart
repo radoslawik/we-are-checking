@@ -30,7 +30,7 @@ class LivetimingDataProvider {
   final List<BestLaps> _bestLaps = [];
 
   Future<List<PlaygroundItem>> getDataPlayground() async {
-    return [PlaygroundItem("Lap comparison", () async => await getLapPositionComparisons([], null))];
+    return [PlaygroundItem("Qualifying lap comparison", () async => await getLapPositionComparisons([], null))];
   }
 
   Future<List<TelemetryEntry>> getTelemetries(Race race, {bool quali = true}) async =>

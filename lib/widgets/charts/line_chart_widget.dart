@@ -75,27 +75,21 @@ class LineChartWidgetState extends State<LineChartWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        elevation: 2,
-        child: Padding(
-            padding: const EdgeInsets.all(0),
-            child: Expanded(
-              child: LineChart(
-                LineChartData(
-                    minX: _minX,
-                    maxX: _maxX,
-                    minY: _minY,
-                    maxY: _maxY,
-                    borderData: FlBorderData(show: false),
-                    lineTouchData: LineTouchData(enabled: false),
-                    clipData: FlClipData.all(),
-                    gridData: FlGridData(show: false),
-                    lineBarsData: _chartLines,
-                    titlesData: FlTitlesData(show: false)),
-                swapAnimationCurve: Curves.easeInCirc,
-                swapAnimationDuration: const Duration(milliseconds: 300),
-              ),
-            )));
+    return LineChart(
+      LineChartData(
+          minX: _minX,
+          maxX: _maxX,
+          minY: _minY,
+          maxY: _maxY,
+          borderData: FlBorderData(show: false),
+          lineTouchData: LineTouchData(enabled: false),
+          clipData: FlClipData.all(),
+          gridData: FlGridData(show: false),
+          lineBarsData: _chartLines,
+          titlesData: FlTitlesData(show: false)),
+      swapAnimationCurve: Curves.easeOutCubic,
+      swapAnimationDuration: const Duration(milliseconds: 300),
+    );
   }
 
   LineChartBarData getChartLine(Map<Duration, FlSpot> points, String number, Duration ts, Color color) {
