@@ -2,10 +2,10 @@ import 'package:hard_tyre/models/media/news_item.dart';
 import 'package:collection/collection.dart';
 
 class Tweet extends NewsItem {
-  Tweet(this.rawObject, List<dynamic> media, String authorName) : super(rawObject["text"], authorName, DateTime.parse(rawObject["created_at"]))
+  Tweet(this.rawObject, List<dynamic> media, String authorName) : super(rawObject["text"].toString(), authorName, DateTime.parse(rawObject["created_at"]))
   {
     id = rawObject["id"];
-    title = title.toString().replaceAll(RegExp(r'\n'), '');
+    title = title.replaceAll(RegExp(r'\n'), '').replaceAll(RegExp(r' 5️⃣'), ''); // Because it was crashing for some reason
     authorId = rawObject["author_id"];
     likes = rawObject["public_metrics"]["like_count"];
     retweet = rawObject["public_metrics"]["retweet_count"];

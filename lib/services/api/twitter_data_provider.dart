@@ -49,16 +49,16 @@ class TwitterDataProvider {
       final id = _userIds[name];
       final response = await http.get(
           Uri.parse(
-              "$_endpoint/users/$id/tweets?tweet.fields=attachments,author_id,created_at,public_metrics,conversation_id,entities,lang&expansions=attachments.media_keys&media.fields=preview_image_url,url&max_results=100"),
+              "$_endpoint/users/$id/tweets?tweet.fields=attachments,author_id,created_at,public_metrics,conversation_id,entities,lang&expansions=attachments.media_keys&media.fields=preview_image_url,url&max_results=50"),
           headers: _headers);
       if (response.statusCode == 200) {
         dynamic decoded = jsonDecode(response.body);
         List<dynamic> media = decoded["includes"]?["media"] ?? [];
-        List<dynamic> decodedData = decoded["data"].where((e) => e["id"] == e["conversation_id"]).toList();
+        List<dynamic> decodedData = decoded["data"].where((e) => e["id"] == e["conversation_id"]).take(15).toList();
         return decodedData.map((e) => Tweet(e, media, _userIds.keys.firstWhereOrNull((k) => _userIds[k] == e['author_id']) ?? "Unknown")).toList();
       }
     }
-    return previous?.take(10).toList() ?? List.empty();
+    return previous?.take(15).toList() ?? List.empty();
   }
 
   Future<List<Tweet>> getTweetTimeline([bool forceRefresh = false]) async {
