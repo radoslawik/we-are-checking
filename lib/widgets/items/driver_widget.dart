@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hard_tyre/models/data/ergast/standings.dart';
@@ -16,24 +14,14 @@ class DriverWidget extends MediaItemWidget {
 }
 
 class _DriverWidgetState extends State<DriverWidget> {
-  File? _driverImg;
-  File? _logoImg;
-
-  void initialize() async {
-    final dimg = await ImageSourceProvider.getDriverImageSource(widget.standing.driver.driverId);
-    final limg = await ImageSourceProvider.getLogoImageSource(widget.standing.constructors.first.constructorId);
-    if (mounted) {
-      setState(() {
-        _driverImg = dimg;
-        _logoImg = limg;
-      });
-    }
-  }
+  late String _driverImg;
+  late String _logoImg;
 
   @override
   void initState() {
     super.initState();
-    initialize();
+    _driverImg = ImageSourceProvider.getDriverImageSource(widget.standing.driver.driverId);
+    _logoImg = ImageSourceProvider.getLogoImageSource(widget.standing.constructors.first.constructorId);
   }
 
   @override
@@ -69,12 +57,11 @@ class _DriverWidgetState extends State<DriverWidget> {
                     Positioned(
                         bottom: 0.0,
                         right: -15.0,
-                        child: _driverImg != null
-                            ? Image.file(
-                                _driverImg!,
+                        child: Image.network(
+                                _driverImg,
                                 scale: 1.5,
-                              )
-                            : Container()),
+                                errorBuilder: (c, o, s) => const Text('error')
+                              )),
                     Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: Column(
@@ -126,7 +113,11 @@ class _DriverWidgetState extends State<DriverWidget> {
                               const SizedBox(
                                 width: 10.0,
                               ),
-                              _logoImg != null ? Image.file(_logoImg!, scale: 2.2) : Container(),
+                              Image.network(
+                                _logoImg,
+                                scale: 2.2,
+                                errorBuilder: (c, o, s) => const Text('error')
+                              ),
                               const SizedBox(
                                 width: 10.0,
                               ),

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:hard_tyre/models/data/ergast/standings.dart';
 import 'package:hard_tyre/services/color_provider.dart';
@@ -14,24 +12,14 @@ class ConstructorWidget extends MediaItemWidget {
 }
 
 class _ConstructorWidgetState extends State<ConstructorWidget> {
-  File? _conImg;
-  File? _logoImg;
-
-  void initialize() async {
-    final cimg = await ImageSourceProvider.getCarImageSource(widget.standing.constructor.constructorId);
-    final limg = await ImageSourceProvider.getLogoImageSource(widget.standing.constructor.constructorId);
-    if (mounted) {
-      setState(() {
-        _conImg = cimg;
-        _logoImg = limg;
-      });
-    }
-  }
+  late String _conImg;
+  late String _logoImg;
 
   @override
   void initState() {
     super.initState();
-    initialize();
+    _conImg = ImageSourceProvider.getCarImageSource(widget.standing.constructor.constructorId);
+    _logoImg = ImageSourceProvider.getLogoImageSource(widget.standing.constructor.constructorId);
   }
 
   @override
@@ -70,11 +58,17 @@ class _ConstructorWidgetState extends State<ConstructorWidget> {
                         0.7,
                       ])),
                       //color: ColorProvider.getColor(widget.constructor.constructorId),
-                      child: _conImg != null ? Image.file(_conImg!, scale: 1.9, alignment: Alignment.topRight) : Container()),
+                      child: Image.network(
+                              _conImg,
+                              scale: 1.9,
+                              alignment: Alignment.topRight,
+                              errorBuilder: (c, o, s) => const Text('error'),
+                            )
+                  )
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 20, top: 20),
-                  child: _logoImg != null ? Image.file(_logoImg!, scale: 1.5) : Container(),
+                  child: Image.network(_logoImg, scale: 1.5, errorBuilder: (c, o, s) => const Text('error')),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 20, right: 10, top: 80, bottom: 0),

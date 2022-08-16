@@ -1,10 +1,5 @@
 
-import 'dart:io';
-
-import 'package:hard_tyre/services/cache_provider.dart';
-
 class ImageSourceProvider {
-  static final _cacheProvider = CacheProvider();
 
   static const String _baseTeamImageUrl = 'https://www.formula1.com/content/dam/fom-website/teams/2022/';
   static const String _baseDriverImageUrl = 'https://www.formula1.com/content/dam/fom-website/drivers/';
@@ -46,28 +41,31 @@ class ImageSourceProvider {
   };
   static const String _ext = "png";
 
-  static Future<File?> getCarImageSource(String key) async {
+  static String getCarImageSource(String key) {
     var val = _constructorNamesMap[key];
-    return await _getImageSource('$_baseTeamImageUrl$val.$_ext');
+    return '$_baseTeamImageUrl$val.$_ext';
   }
 
-  static Future<File?> getLogoImageSource(String key) async {
+  static String getLogoImageSource(String key) {
     var val = _constructorNamesMap[key];
-    return await _getImageSource('$_baseTeamImageUrl$val-logo.$_ext');
+    return '$_baseTeamImageUrl$val-logo.$_ext';
   }
 
-  static Future<File?> getDriverImageSource(String key) async {
+  static String getDriverImageSource(String key) {
     var driverString = _driverNamesMap[key];
-    return await _getImageSource('$_baseDriverImageUrl$driverString.png.transform/2col/image.$_ext');
+    return '$_baseDriverImageUrl$driverString.png.transform/2col/image.$_ext';
   }
 
-  static Future<File?> getCircuitImageSource(String key) async {
+  static String getCircuitImageSource(String key) {
     //final url = '$_baseCircuitImageUrl${key.substring(0,1).toUpperCase()}${key.substring(1)}%20carbon.png.transform/3col/image.$_ext';
     //return await _cacheProvider.tryGetFile(url, refreshDuration: const Duration(days: 1), ext: _ext);
-    return null; // TODO add the urls manually cuz above doesnt work
+    return ''; // TODO add the urls manually cuz above doesnt work
   }
 
+  // Do not cache images, because it doesnt work on web :<
+  /*
   static Future<File?> _getImageSource(String url) async {
     return await _cacheProvider.tryGetFile(url, refreshDuration: const Duration(days: 1), ext: _ext);
   }
+  */
 }

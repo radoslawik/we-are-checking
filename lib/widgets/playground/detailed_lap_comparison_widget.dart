@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:hard_tyre/models/data/ergast/circuits.dart';
 import 'package:hard_tyre/models/data/ergast/drivers.dart';
@@ -27,7 +25,7 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
   List<Driver>? _drivers;
   String? _selectedRaceName;
   Race? _selectedRace;
-  File? _circuitImage;
+  String _circuitImage = "";
   String? _selectedDriver1;
   String? _selectedDriver2;
   List<LapPosition>? _lapPositions;
@@ -86,7 +84,7 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
 
   void _selectedRaceChanged(String? race) async {
     final selectedRace = _races!.firstWhere((element) => element.raceName == race);
-    final imageFile = await ImageSourceProvider.getCircuitImageSource(selectedRace.circuit.circuitId);
+    final imageFile = ImageSourceProvider.getCircuitImageSource(selectedRace.circuit.circuitId);
     setState(() {
       _selectedRaceName = race;
       _selectedRace = selectedRace;
@@ -154,7 +152,8 @@ class _DetailedLapComparisonWidgetState extends State<DetailedLapComparisonWidge
                 Column(
                   children: [
                     Row(children: [
-                      _circuitImage != null ? Image.file(_circuitImage!) : Container()
+                      Image.network(_circuitImage,
+                                errorBuilder: (c, o, s) => const Text('error'))
                     ],),
                     Row(
                       children: [
