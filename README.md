@@ -1,7 +1,7 @@
 # We are checking
 *Understand, we are just checking. We will come back to you. Are you ok. Question.*
 
-Completely useless cross-platform application created using Flutter framework. To run ths meme app simply clone the repository and run `flutter run -d <platform>`. 
+Completely useless cross-platform application with F1 news and statistics created using Flutter framework. To run ths meme app simply clone the repository and run `flutter run -d <platform>`. 
 ### Features
 
 + Information about drivers, teams and current standings
